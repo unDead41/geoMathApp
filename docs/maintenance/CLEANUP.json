@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "status": "prepared_for_verification",
+  "status": "completed",
   "repository": "unDead41/geoMathApp",
   "date_malaysia": "2026-11-06",
   "version": "0.3.1+5",
@@ -524,7 +524,50 @@
     "bytes": 34622003
   },
   "verification": {
-    "status": "pending",
-    "limits": "Host checks and compilation do not establish USB/phone or hosted acceptance."
+    "status": "passed",
+    "source_commit": "c6c1f75bea429059e83f2ce421d3a0c963f8c364",
+    "run": "https://github.com/unDead41/geoMathApp/actions/runs/42219852843",
+    "flutter_sdk": "3.47.9",
+    "dart_sdk": "3.13.7",
+    "formatted_dart_files": 237,
+    "formatter_changes": 0,
+    "analyzer": "no issues",
+    "flutter_tests": {
+      "passed": 676,
+      "skipped": 18,
+      "failures": 0,
+      "skip_reason": "Opt-in visual capture profiles"
+    },
+    "node_tests": {
+      "passed": 60,
+      "failures": 0
+    },
+    "python_tooling_tests": {
+      "passed": 36,
+      "failures": 0
+    },
+    "offline_module_rebuilds": 2,
+    "offline_rebuild_byte_parity": "passed",
+    "planning_inventory": "passed",
+    "android_build": "flutter build apk --debug: compiled",
+    "post_build_git_diff": "clean",
+    "protected_source_blobs": 187,
+    "preserved_binary_assets": 59,
+    "limits": "No new emulator/phone execution, manual accessibility, hosted Auth/classroom/two-client Duel acceptance or production signing was performed."
+  },
+  "active_branches": [
+    "main"
+  ],
+  "archive_commit": "eee88971f82c646cd568fccfe02655d60bb007ce",
+  "completion": {
+    "retirement_run": "https://github.com/unDead41/geoMathApp/actions/runs/42221305579",
+    "retired_original_branches": 6,
+    "retired_temporary_branches": 2,
+    "main_at_retirement": "c6c1f75bea429059e83f2ce421d3a0c963f8c364",
+    "verified_source_snapshot": {
+      "files": 711,
+      "bytes": 34944866
+    },
+    "archive_tree_policy": "Reviewed main tree, with all seven exact original heads plus preparation history retained as archive commit parents."
   }
 }
