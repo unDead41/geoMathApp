@@ -1,0 +1,194 @@
+{
+  "schema_version": 3,
+  "branch": "app-cloud-game",
+  "date": "2026-11-06",
+  "timezone": "Asia/Kuala_Lumpur",
+  "status": "IMPLEMENTED_LOCAL_VERIFIED_APK_BUILT_HOSTED_ACCEPTANCE_PENDING",
+  "app_version": "0.1.0+1",
+  "source_commit": "c3f115bc06a985f6de0b2fc901d4788fd327b451",
+  "source_tree": "287c467ec2991368c80a403fb95c782914fb8d10",
+  "integration_baseline": "20eed848cc015d6253accd6cf72fcf127bf72827",
+  "original_foundation_sha": "9a1f49a7c92d13bb70b7fd1420c34629a7785f9e",
+  "shared_runtime_changes_relative_to_integration": 0,
+  "frozen_pubspec_and_lockfile_changed": false,
+  "feature_runtime_sha256": {
+    "apps/geomath_flutter/lib/features/classroom/presentation/classroom_screen.dart": "49fbb76125121289660a39f42200ddc83d84b71c51a589dd4cb097228d2ab0c8",
+    "apps/geomath_flutter/lib/features/classroom/presentation/classroom_strings.dart": "f8c896c135c55a835de3879a06b78777590f0fc4e253dc9dbba733dde40313b9",
+    "apps/geomath_flutter/lib/features/duel/duel_screen.dart": "fc231e8dc9c65604b637addc55e714376601e7f1fe38a8d11eea179012ba16bf",
+    "apps/geomath_flutter/lib/features/duel/duel_strings.dart": "756e2c3e2e874847a5c19afa26e2ad81ac5bd6bbc42d1b98e2498e410d26effa",
+    "apps/geomath_flutter/lib/features/duel/duel_transport.dart": "dd2fb734f7355f75c5fe9b1d08b0836dea39cf624164473a786ba08fd5352ffa",
+    "apps/geomath_flutter/lib/features/duel/presentation/game_card_carousel.dart": "2f7d668c8d7e9fe83a259e367ce19aae6b49e5a1b515e124e1e771d9379f3ba0",
+    "apps/geomath_flutter/lib/features/duel/presentation/game_question_content.dart": "014139cdc3908d32e20a22b2718b1850b5f27230a692fa85f1f199c0acc1bbc9",
+    "apps/geomath_flutter/lib/features/profile/data/profile_repository.dart": "8d4e717ac5906ade8081c598bff0c69b42ffbf6d3b738ac42e2b1082751ed02c",
+    "apps/geomath_flutter/lib/features/profile/presentation/profile_screen.dart": "10bda00c5786bf8679b9210af6fb51efa9be815e4862fe54c7b61e18684fbac8",
+    "apps/geomath_flutter/lib/features/profile/profile_strings.dart": "829272d7624a5f68ada807e23c41dd60fe4d042264a82da56f4c9a52ba926ad5",
+    "apps/geomath_flutter/lib/features/solo/presentation/solo_pages.dart": "ea67271ec5c4424a7a0868ed8a71b50073d651f917532eff4b729ad111deaa96",
+    "apps/geomath_flutter/lib/features/solo/presentation/solo_strings.dart": "59c4e370185721a75ab334933ce4f932bd8d2c10ef3e468330c164db60cc2798"
+  },
+  "checks": [
+    {
+      "command": "dart format --output=none --set-exit-if-changed lib test integration_test test_driver",
+      "exit": 0,
+      "result": "207 files, 0 changes",
+      "log": "final-format.log"
+    },
+    {
+      "command": "flutter analyze --no-pub",
+      "exit": 0,
+      "result": "No issues found",
+      "log": "final-analyze.log"
+    },
+    {
+      "command": "flutter test --no-pub --reporter expanded",
+      "exit": 0,
+      "result": "536 passed before final three-file profile envelope fix",
+      "log": "final-tests.log"
+    },
+    {
+      "command": "flutter test --no-pub test/features/profile test/features/cloud_game/cloud_game_widgets_test.dart test/lifecycle/navigation_lifecycle_audio_test.dart --reporter expanded",
+      "exit": 0,
+      "result": "49 passed after final profile fix, includes full 304 guest route/layout combinations",
+      "log": "profile-final-tests.log"
+    },
+    {
+      "command": "node --test tools/contracts/verify_exports.test.mjs test/foundation/native_adapter_contract.test.mjs",
+      "exit": 0,
+      "result": "12 passed",
+      "log": "contracts-final.log"
+    },
+    {
+      "command": "flutter build apk --debug --no-pub --dart-define-from-file=config/public.local.json",
+      "exit": 0,
+      "result": "Configured production lib/main.dart APK built",
+      "log": "android-build.log"
+    },
+    {
+      "command": "flutter test --no-pub --dart-define-from-file=config/public.local.json host_capture/capture_duel_refresh.dart --reporter expanded",
+      "exit": 0,
+      "result": "1 opt-in host-capture scenario passed; 7 actual widget captures",
+      "log": "host-captures.log"
+    }
+  ],
+  "evidence_prefix": "updates/2026-11-06/evidence/",
+  "independent_review": {
+    "result": "Approved after profile envelope fix",
+    "critical_unresolved": 0,
+    "important_unresolved": 0,
+    "report": "updates/2026-11-06/evidence/review.md"
+  },
+  "apk": {
+    "bytes": 174962464,
+    "sha256": "c9d7d74e64956aa59dec3fc22f8eb692519054453a243919f56e2ae357d85181",
+    "target": "lib/main.dart",
+    "mode": "debug",
+    "source_commit": "c3f115bc06a985f6de0b2fc901d4788fd327b451",
+    "configuration": "enabled modern public project key; no user credentials; local defines ignored",
+    "filename": "GeoMath-Duel-Class-Profile-Debug.apk",
+    "app_id": "com.geomath.dev",
+    "min_sdk": 24,
+    "target_sdk": 36,
+    "signature": "APK signature v2 verified",
+    "device_execution": "not performed for this new APK"
+  },
+  "host_previews": [
+    {
+      "path": "updates/2026-11-06/previews/01-host-solo-solid-math-ms.png",
+      "sha256": "d9ba8573f8b49a57556b9c5d0ac169bdb032d888f4d3d999c15dfc527cc174a9",
+      "kind": "host-rendered real Flutter widgets; not Android/device screenshots",
+      "data": "real guest/offline services with host secure-storage and persistence seams"
+    },
+    {
+      "path": "updates/2026-11-06/previews/02-host-solo-net-ms.png",
+      "sha256": "176e57e9d55beae9656943b79fade5f6ad40ae3c6d5a1b8719013d081c183dc5",
+      "kind": "host-rendered real Flutter widgets; not Android/device screenshots",
+      "data": "real guest/offline services with host secure-storage and persistence seams"
+    },
+    {
+      "path": "updates/2026-11-06/previews/03-host-duel-entry-ms.png",
+      "sha256": "b7c7c87cc78f26c8f4724905682628c2c228537b3cbf67b0e30f76f53a4ad080",
+      "kind": "host-rendered real Flutter widgets; not Android/device screenshots",
+      "data": "real guest/offline services with host secure-storage and persistence seams"
+    },
+    {
+      "path": "updates/2026-11-06/previews/04-host-duel-active_B2-fixture-ms.png",
+      "sha256": "780a15fc554d97a902731e1421123ea0e71edeb0130883ab032f8c311e27b0c6",
+      "kind": "host-rendered real Flutter widgets; not Android/device screenshots",
+      "data": "labelled transport/gateway fixture"
+    },
+    {
+      "path": "updates/2026-11-06/previews/04-host-duel-active_C2-fixture-ms.png",
+      "sha256": "fdfec3a2a793418e039a14cf41fb7cf40974e15f0055419b6cc281275e8e392b",
+      "kind": "host-rendered real Flutter widgets; not Android/device screenshots",
+      "data": "labelled transport/gateway fixture"
+    },
+    {
+      "path": "updates/2026-11-06/previews/05-host-classroom-teacher-fixture-ms.png",
+      "sha256": "4097b48efeb66da13413040a348977a98ef0406b1cbc6715ed22b4276f60b78f",
+      "kind": "host-rendered real Flutter widgets; not Android/device screenshots",
+      "data": "labelled transport/gateway fixture"
+    },
+    {
+      "path": "updates/2026-11-06/previews/06-host-profile-editor-fixture-ms.png",
+      "sha256": "0210daad810e3c33980727aa3ebb66430306e0b6e5da60fc1c4d85616ece5dc4",
+      "kind": "host-rendered real Flutter widgets; not Android/device screenshots",
+      "data": "labelled transport/gateway fixture"
+    }
+  ],
+  "hosted": {
+    "date_utc": "2026-11-05T20:07:26.959344+00:00",
+    "project": "GeoDecoder Digital",
+    "read_only": true,
+    "duel_deployed_version": 2,
+    "duel_verify_jwt": true,
+    "requests": [
+      {
+        "case": "modern_public_apikey_only",
+        "status": 400,
+        "duel_protocol": "2",
+        "error": "invalid_request"
+      },
+      {
+        "case": "legacy_public_apikey_only",
+        "status": 401,
+        "duel_protocol": null,
+        "error": "Missing authorization header"
+      },
+      {
+        "case": "legacy_public_with_gateway_authorization",
+        "status": 400,
+        "duel_protocol": "2",
+        "error": "invalid_request"
+      },
+      {
+        "case": "public_auth_settings",
+        "status": 200,
+        "duel_protocol": null,
+        "enabled_providers": {
+          "email": true,
+          "google": true,
+          "phone": false
+        }
+      }
+    ],
+    "not_tested": [
+      "real signup/email delivery",
+      "authenticated class/profile operations",
+      "two player match",
+      "Google native callback"
+    ],
+    "side_effects": "No data mutation, room, account, OTP/email or hosted configuration action."
+  },
+  "limits": [
+    "This new APK was packaged and inspected, not run on an Android device in this follow-up. Prior integration device evidence belongs to its pinned baseline.",
+    "Authenticated profile/classroom operations and a two-client Duel were verified with labelled transport fixtures, not real hosted users.",
+    "Modern project publishable key reaches live Duel validation. Invalid read-only action returns protocol2 invalid_request; no real match was created.",
+    "Native Google callback remains gated pending cold/warm hosted round-trip verification.",
+    "No provider, SMTP, secrets, database migration, Edge/backend, Pages, store, main or other branch publication."
+  ],
+  "history": {
+    "previous_handoff": "history/2026-11-05/LATEST.md",
+    "previous_verification": "history/2026-11-05/VERIFICATION.json",
+    "test_invocation_correction": "An initial follow-up command included a nonexistent test/navigation/cloud_game_navigation_test.dart. Its 26 profile cases passed; that invocation failed loading the path. The corrected actual profile/cloud-game/lifecycle suite then passed all49.",
+    "capture_harness_correction": "Opt-in host capture initially needed three imports and tester.runAsync around the classroom event-queue refresh. Only the final capture execution is claimed passed; no production edit was needed."
+  }
+}

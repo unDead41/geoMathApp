@@ -1,0 +1,9 @@
+.migration-work/
+.worktrees/
+__pycache__/
+*.pyc
+**/.dart_tool/
+**/build/
+**/local.properties
+*.jks
+*.keystore

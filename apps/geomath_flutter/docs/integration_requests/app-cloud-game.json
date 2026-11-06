@@ -1,0 +1,262 @@
+{
+  "schema_version": 1,
+  "branch": "app-cloud-game",
+  "app_version": "0.1.0+1",
+  "status": "implemented; integration and hosted acceptance gates explicitly bounded in handoff",
+  "foundation": {
+    "sha": "9a1f49a7c92d13bb70b7fd1420c34629a7785f9e",
+    "contract_version": "1.0.0",
+    "contract_sha256": "0a31f7aef121a151ee91a4ae92250fd893ad62108f27a9389b5fa5ed9a918356",
+    "source_lock_sha256": "cf7d5e6a54c6da65d70f97caae26cff059de558f3fd56db97245252358220452",
+    "pubspec_lock_sha256": "9ba313c3af1f80193c6c0a61c2e38fcee51f1b5aabb8404ebdccfd04210f542c",
+    "runtime_files_verified_unchanged": 101,
+    "same_foundation_as_learning": true
+  },
+  "canonical_sources": {
+    "bank_geometry_engine": "37bc2cd262cc0a54e8ee31339ea37471c1ecfda5",
+    "current_auth_and_backend_audit": "752ce908d16d13acc9cc7510797e8363d182c3f5",
+    "ruleset": "single-attempt-v1",
+    "duel_protocol": 2,
+    "sms": "removed from current source and this native feature"
+  },
+  "composition": {
+    "entry_point": "lib/main.dart",
+    "contribution_factory": "cloudGameFeatures() in lib/app/cloud_game_features.dart (dev path is a re-export)",
+    "contributions": [
+      "cloud_game_preview",
+      "auth",
+      "profile",
+      "classroom",
+      "solo",
+      "duel",
+      "sync"
+    ],
+    "initial_preview_route": "cloud-game-play",
+    "normal_root_action": "Already integrated by pinned baseline through productionFeatures()/initializeProduction(); register exactly once.",
+    "shared_gateway": "AuthServices.gateway is the exact verified NativeAuthRepository also resolved by profile/classroom/sync.",
+    "shared_writer": "FoundationServices.recordsWriter resolves SyncFormativeRecordWriter over shared LocalFormativeRecords and SQLite. Learning and Solo must borrow this same port.",
+    "sync_owner": "Resolve one SyncServices.controller per dependency lifetime; foreground/reopen wakes coalesce. No background force-stop delivery guarantee.",
+    "lifecycle": "Use existing foundation lifecycle/back/audio owners; Solo pauses and checkpoints, Duel/room clock stays server-authoritative. Offline AI pauses both clocks and retains fixed plans; foreground requires explicit Resume.",
+    "ai_battle_composition": "soloFeature() flattens aiBattleFeature() services/routes/localizations/migrations exactly once; no root production factory edit."
+  },
+  "routes": [
+    {
+      "name": "cloud-game-play",
+      "path": "/play"
+    },
+    {
+      "name": "solo-resume",
+      "path": "/play/resume"
+    },
+    {
+      "name": "solo-game",
+      "path": "/play/solo"
+    },
+    {
+      "name": "solo-scores",
+      "path": "/play/scores"
+    },
+    {
+      "name": "cloud-game-duel",
+      "path": "/duel"
+    },
+    {
+      "name": "cloud-game-duel-lobby",
+      "path": "/duel/lobby"
+    },
+    {
+      "name": "cloud-game-duel-match",
+      "path": "/duel/match"
+    },
+    {
+      "name": "cloud-game-duel-result",
+      "path": "/duel/result"
+    },
+    {
+      "name": "cloud-game-login",
+      "path": "/auth/login"
+    },
+    {
+      "name": "cloud-game-signup",
+      "path": "/auth/signup"
+    },
+    {
+      "name": "cloud-game-recover",
+      "path": "/auth/recover"
+    },
+    {
+      "name": "cloud-game-legacy-recovery",
+      "path": "/auth/legacy-recovery"
+    },
+    {
+      "name": "cloud-game-confirmation",
+      "path": "/auth/verify"
+    },
+    {
+      "name": "cloud-game-reset",
+      "path": "/auth/reset"
+    },
+    {
+      "name": "cloud-game-security",
+      "path": "/account/security"
+    },
+    {
+      "name": "cloud-game-sessions",
+      "path": "/account/sessions"
+    },
+    {
+      "name": "cloud-game-profile",
+      "path": "/profile"
+    },
+    {
+      "name": "cloud-game-classes",
+      "path": "/classes"
+    },
+    {
+      "name": "sync.pending",
+      "path": "/sync"
+    },
+    {
+      "name": "ai-battle",
+      "path": "/play/ai",
+      "show_navigation": false,
+      "back_policy": "pause both clocks and durably save; block leave on failure"
+    }
+  ],
+  "localizations": [
+    "cloud_game_preview",
+    "auth",
+    "profile",
+    "classroom",
+    "solo",
+    "duel",
+    "sync",
+    "ai_battle"
+  ],
+  "migrations": [
+    {
+      "namespace": "solo",
+      "version": 1,
+      "tables": [
+        "solo_checkpoints",
+        "solo_analysis"
+      ],
+      "source": "lib/features/solo/data/solo_repository.dart"
+    },
+    {
+      "namespace": "sync",
+      "version": 1,
+      "tables": [
+        "sync_solo_receipts"
+      ],
+      "source": "lib/features/sync/data/sync_receipt_schema.dart"
+    },
+    {
+      "namespace": "ai_battle",
+      "version": 1,
+      "tables": [
+        "ai_battle_slots"
+      ],
+      "source": "lib/features/ai_battle/data/ai_battle_repository.dart"
+    }
+  ],
+  "schema_policy": "Foundation owns module_reflections/completed_solo_records/formative_outbox. No parallel learning reflection schema or web/hosted migration edit.",
+  "dependencies": {
+    "new_pubspec_entries": [],
+    "lockfile_changed": false,
+    "native_link_adapter": "Narrow inspected app_links 7.2.2 platform channels via locked supabase_flutter dependency; revalidate on SDK upgrade."
+  },
+  "assets": {
+    "new_registration": [],
+    "uses": [
+      "assets/contracts/bank15.json",
+      "assets/contracts/engine_golden.json",
+      "assets/contracts/geometry_cards.json"
+    ],
+    "learning_dependency": false
+  },
+  "platform_requests": [
+    {
+      "owner": "app-integration",
+      "kind": "native_auth_callback",
+      "current": "authFeature(nativeCallbackReady:false)",
+      "request": "Add Android VIEW intent filter with DEFAULT and BROWSABLE categories for scheme com.geomath.dev, host auth, path /callback. Keep one app_links dispatcher. Add identical redirect URI to hosted Auth allowlist in separately authorized setup, verify cold/warm/expired/replayed Google/recovery flows, then enable nativeCallbackReady.",
+      "uri": "com.geomath.dev://auth/callback",
+      "new_permissions": [],
+      "note": "INTERNET already exists. No OAuth secret, hosted setting or manifest was changed here. Signup confirms through canonical web link then returns to native login."
+    },
+    {
+      "owner": "app-integration",
+      "kind": "shared_navigation_guard",
+      "request": "No additional shared-navigation change requested by this follow-up; retain existing guarded behavior.",
+      "current_fallback": "Profile drafts and uncertain saves survive tab reentry in actor-bound memory. Classroom retains the same controller/attempt and pending request. Duel hides destination navigation and confirms back/forfeit.",
+      "files": [
+        "lib/app/app_router.dart",
+        "lib/core/navigation/app_navigation.dart"
+      ],
+      "current": "Integrated in baseline 20eed848cc015d6253accd6cf72fcf127bf72827"
+    }
+  ],
+  "capability_and_configuration_needs": [
+    "Supply only valid GEOMATH_SUPABASE_URL and GEOMATH_SUPABASE_PUBLISHABLE_KEY via the frozen public configuration mechanism.",
+    "Verify deployed geodecoder-auth Edge and canonical server-verified role/profile/session RPCs. Google requires current Auth settings and completed native callback gate.",
+    "Verify classroom_crud:1 and canonical geo_action dispatch. Invitation cancel/decline take invite_id only; revision applies to class/room/member mutations.",
+    "Verify protocol2 Duel Edge/backend on two independent staging clients, guest capability tokens and exact sequence replay.",
+    "Verify geo_offline_sync installed and accepted-ID replies. Missing capability keeps pending rows. No SQL/provider/SMTP/Edge deployment is part of this branch."
+  ],
+  "integration_tests": [
+    "integration_test/cloud_game_smoke_test.dart",
+    "integration_test/cloud_game_preview_test.dart",
+    "integration_test/solo_reopen_test.dart",
+    "integration_test/sync_storage_test.dart",
+    "integration_test/classroom_contract_test.dart"
+  ],
+  "ci_request": "Use the inherited integration checks and distinguish the current APK from baseline Android receipts. This follow-up adds no workflow changes.",
+  "screen_matrix": "docs/handoffs/app-cloud-game/screen-coverage.json",
+  "handoff": "docs/handoffs/app-cloud-game/LATEST.md",
+  "hosted_deployments_performed": [],
+  "followup_2026_11_06": {
+    "source_commit": "c3f115bc06a985f6de0b2fc901d4788fd327b451",
+    "integration_baseline": "20eed848cc015d6253accd6cf72fcf127bf72827",
+    "shared_runtime_changes": 0,
+    "handoff": "docs/handoffs/app-cloud-game/LATEST.md",
+    "apk_target": "lib/main.dart",
+    "new_dependencies": [],
+    "new_schema": [],
+    "new_backend_deployments": []
+  },
+  "followup_ai_2026_11_06": {
+    "runtime_commit": "ec578641a3e33e167c23aab85780550d7575f6e0",
+    "parent": "1d7c8f7e4a6b980b1a911729e73818f79476302f",
+    "runtime_tree": "d903bbf78a8caa62f2cc6edcf087fbcd49732608",
+    "handoff": "docs/handoffs/app-cloud-game/ai-battle-20261106/README.md",
+    "new_dependencies": [],
+    "new_hosted_schema": [],
+    "new_backend_deployments": [],
+    "local_migration": "ai_battle:1",
+    "official_score_writes": false,
+    "full_flutter_tests": 598,
+    "canonical_checks": 12,
+    "apk_preview": {
+      "package": "com.geomath.ai.preview",
+      "label": "GeoMath AI",
+      "identity_changes_in_build_copy_only": true,
+      "physical_device_execution": "not tested"
+    },
+    "preferred_apk": {
+      "filename": "GeoMath-0.2.1-Lengkap-arm64.apk",
+      "package": "com.geomath.dev",
+      "label": "GeoMath",
+      "version_name": "0.2.1",
+      "version_code": 2003,
+      "configured_build_number": 3,
+      "source_commit": "57c0c1b1f1444cb136dc37f66bacd8cdb50d0d61",
+      "source_or_platform_changes": [],
+      "installed_signing_key_match": "unknown; matching old key is required for in-place update",
+      "same_signer_as_inspected_0_1_0_apk": false,
+      "same_signer_as_inspected_0_2_0_apk": true,
+      "physical_device_execution": "not tested",
+      "handoff": "docs/handoffs/app-cloud-game/ai-battle-20261106/ORIGINAL_APP_APK.md"
+    }
+  }
+}

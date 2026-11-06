@@ -1,0 +1,746 @@
+import 'dart:async';
+import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:webview_flutter/webview_flutter.dart';
+
+import '../../core/audio/audio_coordinator.dart';
+import '../../core/lifecycle/app_lifecycle.dart';
+import '../../core/module/module_host_bridge.dart';
+import '../../core/navigation/app_navigation.dart';
+import '../../core/preferences/app_preferences.dart';
+import '../../core/preferences/preferences_repository.dart';
+import '../../core/result.dart';
+import '../../core/runtime/clock.dart';
+import '../../core/runtime/random_source.dart';
+import '../../core/session/auth_session.dart';
+import 'module_asset_repository.dart';
+
+enum ModuleLoadPhase { verifying, loading, ready, failed, closed }
+
+enum ModuleStartupStage { idle, document, handshake, ready, closed, expired }
+
+/// The native host owns two bounded foreground stages. Loading the trusted
+/// local document must not consume the child's secure-ready budget.
+/// This scheduler never accepts a document, message, actor or capability itself.
+final class ModuleStartupDeadline {
+  ModuleStartupDeadline({
+    required this.onExpired,
+    this.clock = const SystemClock(),
+  });
+
+  static const documentBudget = Duration(seconds: 30);
+  // Actual Android cold boots completed a healthy opaque child in ~35 seconds.
+  // Its independent, bounded foreground budget includes parsing that child.
+  static const handshakeBudget = Duration(seconds: 60);
+  final void Function(ModuleStartupStage stage) onExpired;
+  final Clock clock;
+  ModuleStartupStage _stage = ModuleStartupStage.idle;
+  Duration _remaining = documentBudget;
+  Timer? _timer;
+  int? _armedAt;
+  bool _active = true;
+
+  ModuleStartupStage get stage => _stage;
+  bool get _waiting =>
+      _stage == ModuleStartupStage.document ||
+      _stage == ModuleStartupStage.handshake;
+  Duration get remaining {
+    if (_armedAt case final start?) {
+      final elapsed = clock.monotonicMilliseconds() - start;
+      return Duration(
+        milliseconds: (_remaining.inMilliseconds - elapsed).clamp(
+          0,
+          (_stage == ModuleStartupStage.handshake
+                  ? handshakeBudget
+                  : documentBudget)
+              .inMilliseconds,
+        ),
+      );
+    }
+    return _remaining;
+  }
+
+  void beginDocument() {
+    if (_stage != ModuleStartupStage.idle) return;
+    _stage = ModuleStartupStage.document;
+    _remaining = documentBudget;
+    _arm();
+  }
+
+  bool beginHandshake() {
+    if (_stage != ModuleStartupStage.document) return false;
+    if (remaining == Duration.zero) {
+      _expire();
+      return false;
+    }
+    _stop();
+    _stage = ModuleStartupStage.handshake;
+    _remaining = handshakeBudget;
+    _arm();
+    return true;
+  }
+
+  void setActive(bool active) {
+    if (_active == active) return;
+    if (_waiting) _remaining = remaining;
+    _timer?.cancel();
+    _timer = null;
+    _armedAt = null;
+    _active = active;
+    _arm();
+  }
+
+  bool markReady() {
+    if (!_waiting) return false;
+    if (remaining == Duration.zero) {
+      _expire();
+      return false;
+    }
+    _stop();
+    _stage = ModuleStartupStage.ready;
+    return true;
+  }
+
+  void close() {
+    _stop();
+    if (_stage != ModuleStartupStage.expired) {
+      _stage = ModuleStartupStage.closed;
+    }
+  }
+
+  void _arm() {
+    if (!_active || !_waiting || _timer != null) return;
+    _armedAt = clock.monotonicMilliseconds();
+    _timer = Timer(_remaining, _expire);
+  }
+
+  void _expire() {
+    if (!_waiting) return;
+    final expiredStage = _stage;
+    _stop();
+    _remaining = Duration.zero;
+    _stage = ModuleStartupStage.expired;
+    onExpired(expiredStage);
+  }
+
+  void _stop() {
+    _timer?.cancel();
+    _timer = null;
+    _armedAt = null;
+  }
+}
+
+/// The production Android adapter: a real WebView loading only verified local
+/// assets. It has no mock WebView or network fallback.
+final class ModuleSpikeController extends ChangeNotifier {
+  ModuleSpikeController({
+    required this.sessions,
+    required this.lifecycle,
+    required this.preferences,
+    required this.audio,
+    ModuleAssetRepository? assets,
+    this.onCommand,
+    RandomSource? random,
+  }) : assets = assets ?? ModuleAssetRepository() {
+    final source = random ?? SecureRandomSource();
+    bridge = ModuleHostBridge(
+      sessions: sessions,
+      lifecycle: lifecycle,
+      instanceId: randomIdentifier(source),
+      bridgeSession: randomIdentifier(source),
+      progressSession: randomIdentifier(source),
+      allowedNavigationRoutes: const {'/help', '/settings'},
+    );
+    _documentId = randomIdentifier(source);
+    _audioLease = audio.register(
+      owner: 'module:${bridge.identity.instanceId}',
+      endpoint: _ModuleAudioEndpoint(this),
+    );
+    _startup = ModuleStartupDeadline(
+      onExpired: (stage) => _fail(
+        AppFailure(
+          code: FailureCode.unavailable,
+          message: stage == ModuleStartupStage.document
+              ? 'The trusted local learning document did not finish loading.'
+              : 'The local learning module did not finish its secure handshake.',
+        ),
+      ),
+    );
+    bridge.addListener(_bridgeChanged);
+    preferences.addListener(_preferencesChanged);
+    lifecycle.addListener(_lifecycleChanged);
+  }
+
+  static const trustedAssetUrl =
+      'file:///android_asset/flutter_assets/assets/module/index.html';
+  final AuthSession sessions;
+  final AppLifecycleController lifecycle;
+  final PreferencesRepository preferences;
+  final AudioCoordinator audio;
+  final ModuleAssetRepository assets;
+  final Future<void> Function(ModuleCommand)? onCommand;
+  late final ModuleHostBridge bridge;
+  late final String _documentId;
+  late final AudioLease _audioLease;
+  final _ready = Completer<Result<ModuleCommand>>();
+  WebViewController? _webViewController;
+  ModuleLoadPhase _phase = ModuleLoadPhase.verifying;
+  AppFailure? _failure;
+  ModuleCommand? _lastValidatedCommand;
+  int _acceptedCommandCount = 0;
+  bool _started = false;
+  bool _configured = false;
+  bool _disposed = false;
+  bool _routeVisible = true;
+  bool _audioAllowed = false;
+  Brightness _brightness = Brightness.light;
+  double? _effectiveTextScale;
+  bool _systemReducedMotion = false;
+  String? _currentTopLevelUrl;
+  late final ModuleStartupDeadline _startup;
+
+  WebViewController? get webViewController => _webViewController;
+  ModuleLoadPhase get phase => _phase;
+  ModuleStartupStage get startupStage => _startup.stage;
+  AppFailure? get failure => _failure;
+  ModuleCommand? get lastValidatedCommand => _lastValidatedCommand;
+  int get acceptedCommandCount => _acceptedCommandCount;
+  Future<Result<ModuleCommand>> get ready => _ready.future;
+
+  Future<void> initialize() async {
+    if (_started || _disposed) return;
+    _started = true;
+    final checked = await assets.verify();
+    if (_disposed) return;
+    if (checked case Failed<VerifiedModuleAssets>(:final failure)) {
+      _fail(failure);
+      return;
+    }
+    if (defaultTargetPlatform != TargetPlatform.android ||
+        WebViewPlatform.instance == null) {
+      _fail(
+        const AppFailure(
+          code: FailureCode.unavailable,
+          message: 'This learning module requires the Android WebView runtime.',
+        ),
+      );
+      return;
+    }
+    if (bridge.status == ModuleBridgeStatus.closed) return;
+    try {
+      final controller = WebViewController();
+      _webViewController = controller;
+      await controller.setJavaScriptMode(JavaScriptMode.unrestricted);
+      if (kDebugMode) {
+        await controller.setOnConsoleMessage((message) {
+          // Fixed non-payload breadcrumbs only. Console output cannot accept a
+          // bridge command, report readiness, or export arbitrary child text.
+          if (RegExp(
+            r'^GEOMATH_CHILD_STAGE (?:preferences-start|preferences-end|canonical-start|render-start|render-end|models-end|access-end|host-start|host-end)$',
+          ).hasMatch(message.message)) {
+            debugPrint(message.message);
+          }
+        });
+      }
+      await controller.addJavaScriptChannel(
+        'GeoMathNative',
+        onMessageReceived: (message) => unawaited(_receive(message.message)),
+      );
+      await controller.setNavigationDelegate(
+        NavigationDelegate(
+          onNavigationRequest: (request) {
+            if (_disposed) return NavigationDecision.prevent;
+            if (request.isMainFrame) {
+              return request.url == trustedAssetUrl && !_configured
+                  ? NavigationDecision.navigate
+                  : NavigationDecision.prevent;
+            }
+            return request.url == 'about:srcdoc' ||
+                    request.url.startsWith('about:srcdoc#') ||
+                    request.url == 'about:blank'
+                ? NavigationDecision.navigate
+                : NavigationDecision.prevent;
+          },
+          onPageStarted: (url) {
+            _currentTopLevelUrl = url;
+            if (url != trustedAssetUrl) _untrustedNavigation();
+          },
+          onPageFinished: (url) => unawaited(_configure(url)),
+          onUrlChange: (change) {
+            if (change.url != null && change.url != trustedAssetUrl) {
+              _untrustedNavigation();
+            }
+          },
+          onWebResourceError: (error) {
+            if (error.isForMainFrame == true) {
+              _fail(
+                const AppFailure(
+                  code: FailureCode.unavailable,
+                  message: 'The local learning document could not be opened.',
+                ),
+              );
+            }
+          },
+        ),
+      );
+      if (_disposed ||
+          bridge.status == ModuleBridgeStatus.closed ||
+          _phase == ModuleLoadPhase.failed ||
+          _phase == ModuleLoadPhase.closed) {
+        return;
+      }
+      bridge.attachDocument(_documentId);
+      _phase = ModuleLoadPhase.loading;
+      notifyListeners();
+      _updateStartupActivity();
+      _startup.beginDocument();
+      await controller.loadFlutterAsset(ModuleAssetRepository.entryPoint);
+    } catch (_) {
+      _fail(
+        const AppFailure(
+          code: FailureCode.unavailable,
+          message: 'The Android learning WebView could not start.',
+        ),
+      );
+    }
+  }
+
+  Future<void> _configure(String url) async {
+    if (_disposed ||
+        _configured ||
+        (_phase != ModuleLoadPhase.loading &&
+            _phase != ModuleLoadPhase.ready) ||
+        url != trustedAssetUrl ||
+        bridge.status == ModuleBridgeStatus.closed) {
+      return;
+    }
+    final controller = _webViewController;
+    if (controller == null ||
+        await controller.currentUrl() != trustedAssetUrl) {
+      return;
+    }
+    if (_disposed ||
+        _configured ||
+        bridge.status == ModuleBridgeStatus.closed ||
+        (_phase != ModuleLoadPhase.loading &&
+            _phase != ModuleLoadPhase.ready)) {
+      return;
+    }
+    _currentTopLevelUrl = url;
+    // The trusted root document has finished loading. Its configure IPC reply
+    // may wait behind parsing/executing the child, so that work belongs to the
+    // child's budget. This transition grants no readiness or capabilities and
+    // rejects duplicate/late callbacks without restarting the budget.
+    if (!_startup.beginHandshake()) return;
+    final data = <String, Object>{
+      'instanceId': bridge.identity.instanceId,
+      'bridgeSession': bridge.identity.bridgeSession,
+      'progressSession': bridge.progressSession,
+      'theme': _theme,
+      'settings': _settings,
+      'progress': <Object>[],
+    };
+    try {
+      final result = await controller.runJavaScriptReturningResult(
+        'window.GeoMathModule.configure(${jsonEncode(data)})',
+      );
+      if (result != true && result != 'true') {
+        throw StateError('Trusted wrapper configuration rejected.');
+      }
+      // The platform may reply after cancellation/expiry, or the validated
+      // ready envelope may beat this platform Future. Never revive a terminal
+      // instance. Only the accepted result marks the native wrapper configured.
+      if (_disposed ||
+          bridge.status == ModuleBridgeStatus.closed ||
+          (_phase != ModuleLoadPhase.loading &&
+              _phase != ModuleLoadPhase.ready)) {
+        return;
+      }
+      _configured = true;
+      await _syncActive();
+    } catch (_) {
+      _fail(
+        const AppFailure(
+          code: FailureCode.unavailable,
+          message: 'The trusted learning wrapper could not be configured.',
+        ),
+      );
+    }
+  }
+
+  Future<void> _receive(String encoded) async {
+    if (_disposed || _currentTopLevelUrl != trustedAssetUrl) return;
+    final controller = _webViewController;
+    if (controller == null ||
+        await controller.currentUrl() != trustedAssetUrl ||
+        _disposed) {
+      return;
+    }
+    // Android's JavaScriptChannel has no frame metadata. Proof is the wrapper
+    // capability held only in its closure, plus this pinned native document;
+    // the source-validated opaque child never receives that capability.
+    final result = bridge.receive(
+      encoded,
+      context: ModuleMessageContext(
+        documentId: _documentId,
+        isTrustedDocument: _currentTopLevelUrl == trustedAssetUrl,
+        sourceProof: ModuleSourceProof.wrapperCapability,
+      ),
+    );
+    if (result case Success<ModuleCommand>(:final value)) {
+      if (value.kind == ModuleCommandKind.ready) {
+        if (_phase != ModuleLoadPhase.ready && !_startup.markReady()) return;
+        // JS enqueue is not native acceptance. Acknowledge only this validated
+        // document/actor; configuration's platform reply may still be pending.
+        unawaited(
+          controller
+              .runJavaScript('window.GeoMathModule.acknowledgeReady()')
+              .catchError((Object _) {}),
+        );
+        if (_phase == ModuleLoadPhase.ready) return;
+      }
+      _lastValidatedCommand = value;
+      _acceptedCommandCount++;
+      if (value.kind == ModuleCommandKind.ready) {
+        _phase = ModuleLoadPhase.ready;
+        if (!_ready.isCompleted) _ready.complete(Success(value));
+        if (_routeVisible) {
+          unawaited(_audioLease.activate().catchError((Object _) {}));
+        }
+      }
+      notifyListeners();
+      await onCommand?.call(value);
+    }
+  }
+
+  String get _theme =>
+      preferences.value.theme == AppTheme.dark ||
+          (preferences.value.theme == AppTheme.system &&
+              _brightness == Brightness.dark)
+      ? 'dark'
+      : 'light';
+
+  Map<String, Object> get _settings => {
+    'language': preferences.value.language.name,
+    'textSize': (_effectiveTextScale ?? preferences.value.textScale) * 100,
+    'motionPaused': preferences.value.reducedMotion || _systemReducedMotion,
+    'contrast': preferences.value.strongContrast ? 'strong' : 'standard',
+    'audioEnabled': preferences.value.soundEnabled && _audioAllowed,
+  };
+
+  @visibleForTesting
+  Map<String, Object> get presentationSettings => Map.unmodifiable(_settings);
+
+  /// The native shell already composes device text scaling with the app's
+  /// multiplier. Forward that effective size and the device motion request to
+  /// the same trusted child, without changing stored preferences or its draft.
+  void updateAccessibility({
+    required double textScale,
+    required bool reducedMotion,
+  }) {
+    if (!textScale.isFinite || textScale <= 0 || textScale > 10) {
+      throw ArgumentError.value(
+        textScale,
+        'textScale',
+        'Invalid effective text scale',
+      );
+    }
+    if (_effectiveTextScale == textScale &&
+        _systemReducedMotion == reducedMotion) {
+      return;
+    }
+    _effectiveTextScale = textScale;
+    _systemReducedMotion = reducedMotion;
+    _preferencesChanged();
+  }
+
+  /// Theme/media changes update presentation through the existing settings v1
+  /// bridge. Neither document, camera, dimensions nor unfolding is reloaded.
+  void updateBrightness(Brightness brightness) {
+    if (brightness == _brightness) return;
+    _brightness = brightness;
+    _preferencesChanged();
+  }
+
+  void _preferencesChanged() {
+    if (!_configured || _disposed) return;
+    unawaited(
+      _run(
+        'window.GeoMathModule.updatePreferences(${jsonEncode({'theme': _theme, 'settings': _settings})})',
+      ),
+    );
+  }
+
+  /// Root navigation can cover the module without destroying its activity.
+  void setRouteVisible(bool value) {
+    if (_routeVisible == value) return;
+    _routeVisible = value;
+    _updateStartupActivity();
+    unawaited(_syncActive());
+    if (_phase == ModuleLoadPhase.ready) {
+      unawaited(
+        (value ? _audioLease.activate() : _audioLease.deactivate()).catchError(
+          (Object _) {},
+        ),
+      );
+    }
+  }
+
+  void _lifecycleChanged() {
+    _updateStartupActivity();
+    unawaited(_syncActive());
+  }
+
+  void _updateStartupActivity() =>
+      _startup.setActive(lifecycle.isForeground && _routeVisible);
+
+  Future<void> _syncActive() => _run(
+    'window.GeoMathModule.setActive(${lifecycle.isForeground && _routeVisible})',
+  );
+
+  Future<void> _run(String script) async {
+    final controller = _webViewController;
+    if (!_configured ||
+        _disposed ||
+        controller == null ||
+        _currentTopLevelUrl != trustedAssetUrl) {
+      return;
+    }
+    try {
+      await controller.runJavaScript(script);
+    } catch (_) {
+      // A disposed platform view cannot deliver new commands. It is never
+      // treated as a successful preference or persistence acknowledgement.
+    }
+  }
+
+  Future<void> _setAudioAllowed(bool allowed) async {
+    _audioAllowed = allowed;
+    final controller = _webViewController;
+    if (!_configured ||
+        _disposed ||
+        controller == null ||
+        _phase != ModuleLoadPhase.ready) {
+      return;
+    }
+    await controller.runJavaScript(
+      'window.GeoMathModule.updatePreferences(${jsonEncode({'theme': _theme, 'settings': _settings})})',
+    );
+    final revision = await controller.runJavaScriptReturningResult(
+      'window.GeoMathModule.setAudioAllowed($allowed)',
+    );
+    final expected = int.tryParse(revision.toString());
+    if (expected == null || expected < 1) {
+      throw StateError('Audio gate unavailable.');
+    }
+    for (var attempt = 0; attempt < 50; attempt++) {
+      if (_disposed || _phase != ModuleLoadPhase.ready) return;
+      final raw = await controller.runJavaScriptReturningResult(
+        'window.GeoMathModule.diagnostics().audioAck',
+      );
+      if (int.tryParse(raw.toString()) == expected) return;
+      await Future<void>.delayed(const Duration(milliseconds: 40));
+    }
+    throw StateError('The learning audio stop/grant was not acknowledged.');
+  }
+
+  void _bridgeChanged() {
+    if (_disposed || bridge.status != ModuleBridgeStatus.closed) return;
+    if (_phase != ModuleLoadPhase.failed) _phase = ModuleLoadPhase.closed;
+    _startup.close();
+    unawaited(_run('window.GeoMathModule.dispose()'));
+    unawaited(_audioLease.deactivate().catchError((Object _) {}));
+    if (!_ready.isCompleted) {
+      _ready.complete(
+        const Failed(
+          AppFailure(
+            code: FailureCode.stale,
+            message: 'The learning session has ended.',
+          ),
+        ),
+      );
+    }
+    notifyListeners();
+  }
+
+  void _untrustedNavigation() {
+    _currentTopLevelUrl = null;
+    _fail(
+      const AppFailure(
+        code: FailureCode.unauthorized,
+        message: 'Navigation outside the trusted offline module was blocked.',
+      ),
+    );
+  }
+
+  void _fail(AppFailure failure) {
+    if (_disposed ||
+        _phase == ModuleLoadPhase.failed ||
+        _phase == ModuleLoadPhase.closed) {
+      return;
+    }
+    _failure = failure;
+    _phase = ModuleLoadPhase.failed;
+    _startup.close();
+    if (!_ready.isCompleted) _ready.complete(Failed(failure));
+    bridge.close();
+    notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    if (_disposed) return;
+    preferences.removeListener(_preferencesChanged);
+    lifecycle.removeListener(_lifecycleChanged);
+    bridge.removeListener(_bridgeChanged);
+    unawaited(_audioLease.release().catchError((Object _) {}));
+    unawaited(_run('window.GeoMathModule.dispose()'));
+    bridge.dispose();
+    _disposed = true;
+    _startup.close();
+    if (!_ready.isCompleted) {
+      _ready.complete(
+        const Failed(
+          AppFailure(
+            code: FailureCode.cancelled,
+            message: 'The learning view was closed.',
+          ),
+        ),
+      );
+    }
+    super.dispose();
+  }
+}
+
+final class _ModuleAudioEndpoint implements AudioEndpoint {
+  const _ModuleAudioEndpoint(this.controller);
+  final ModuleSpikeController controller;
+  @override
+  Future<void> setPlaybackAllowed(bool allowed) =>
+      controller._setAudioAllowed(allowed);
+  @override
+  Future<void> dispose() async {}
+}
+
+/// Foundation spike screen, not a claim that every learning flow is complete.
+final class ModuleSpikeScreen extends StatefulWidget {
+  const ModuleSpikeScreen({
+    super.key,
+    required this.sessions,
+    required this.lifecycle,
+    required this.preferences,
+    required this.audio,
+    this.onCommand,
+    this.assets,
+    this.controller,
+    this.embedded = false,
+  });
+  final AuthSession sessions;
+  final AppLifecycleController lifecycle;
+  final PreferencesRepository preferences;
+  final AudioCoordinator audio;
+  final Future<void> Function(ModuleCommand)? onCommand;
+  final ModuleAssetRepository? assets;
+  final ModuleSpikeController? controller;
+  final bool embedded;
+
+  @override
+  State<ModuleSpikeScreen> createState() => _ModuleSpikeScreenState();
+}
+
+final class _ModuleSpikeScreenState extends State<ModuleSpikeScreen> {
+  late final ModuleSpikeController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller =
+        widget.controller ??
+        ModuleSpikeController(
+          sessions: widget.sessions,
+          lifecycle: widget.lifecycle,
+          preferences: widget.preferences,
+          audio: widget.audio,
+          assets: widget.assets,
+          onCommand: widget.onCommand,
+        );
+    unawaited(_controller.initialize());
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _controller.updateBrightness(Theme.of(context).brightness);
+    _controller.updateAccessibility(
+      textScale: MediaQuery.textScalerOf(context).scale(16) / 16,
+      reducedMotion: MediaQuery.disableAnimationsOf(context),
+    );
+    _controller.setRouteVisible(
+      AppRouteScope.maybeOf(context)?.isCurrent ?? true,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) => AnimatedBuilder(
+    animation: Listenable.merge([_controller, widget.preferences]),
+    builder: (context, _) {
+      final english = widget.preferences.value.language == AppLanguage.en;
+      final body = switch (_controller.phase) {
+        ModuleLoadPhase.failed => Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: SelectableText(
+              english
+                  ? 'The offline learning module is unavailable. ${_controller.failure?.message ?? ''}'
+                  : 'Modul pembelajaran luar talian tidak tersedia. Semak pemasangan aplikasi yang sah.',
+            ),
+          ),
+        ),
+        ModuleLoadPhase.closed => Center(
+          child: Text(
+            english
+                ? 'This learning session has ended. Reopen the module.'
+                : 'Sesi pembelajaran ini telah tamat. Buka semula modul.',
+          ),
+        ),
+        ModuleLoadPhase.verifying => Center(
+          child: Semantics(
+            label: english
+                ? 'Verifying offline assets'
+                : 'Mengesahkan aset luar talian',
+            child: const CircularProgressIndicator(),
+          ),
+        ),
+        ModuleLoadPhase.loading || ModuleLoadPhase.ready => Stack(
+          children: [
+            if (_controller.webViewController case final controller?)
+              WebViewWidget(
+                key: const ValueKey('canonical-module-webview'),
+                controller: controller,
+              ),
+            if (_controller.phase == ModuleLoadPhase.loading)
+              const Align(
+                alignment: Alignment.topCenter,
+                child: LinearProgressIndicator(),
+              ),
+          ],
+        ),
+      };
+      if (widget.embedded) return body;
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(english ? 'Explore geometry' : 'Teroka geometri'),
+        ),
+        body: body,
+      );
+    },
+  );
+
+  @override
+  void dispose() {
+    if (widget.controller == null) _controller.dispose();
+    super.dispose();
+  }
+}

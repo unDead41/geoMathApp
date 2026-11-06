@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "platform": "app",
+  "date": "2026-11-06",
+  "source_repository": "unDead41/geoMathPhysical",
+  "destination_repository": "unDead41/geoMathApp",
+  "source_branches": [
+    {
+      "name": "app",
+      "sha": "00ab7966af645c64b71709ae44aefcde7487f292",
+      "filtered_sha": "9765d9a99a28d4e34e2e281f80ea585170759b5e",
+      "destination_branch": "app"
+    },
+    {
+      "name": "app-cloud-game",
+      "sha": "288dc703d61479cb89a22d4f2416d71d9b8294ac",
+      "filtered_sha": "41e3640edc7f2dfe5a19a5669a6ef75d19d9284c",
+      "destination_branch": "app-cloud-game"
+    },
+    {
+      "name": "app-foundation",
+      "sha": "9a1f49a7c92d13bb70b7fd1420c34629a7785f9e",
+      "filtered_sha": "6e252449a55da46066892d7ed2fb00c814733331",
+      "destination_branch": "app-foundation"
+    },
+    {
+      "name": "app-integration",
+      "sha": "20eed848cc015d6253accd6cf72fcf127bf72827",
+      "filtered_sha": "62857941abca5e26ca7a24dccd236da12933a1d7",
+      "destination_branch": "app-integration"
+    },
+    {
+      "name": "app-learning",
+      "sha": "8a5527438ee828a306afba36a337a3ca3bbedb83",
+      "filtered_sha": "6e46d649a38fcb2aae78ec79ab8e712976b6bd19",
+      "destination_branch": "app-learning"
+    },
+    {
+      "name": "app-uiux-refinement",
+      "sha": "67c1e1bf76064d5df2787bef90ec789d1a21a975",
+      "filtered_sha": "eaeac350dd92b5922346bde78f6a84980142a554",
+      "destination_branch": "app-uiux-refinement"
+    }
+  ],
+  "assembled_parent": "2eae1df90505279113c3f3b35303323c22ac8925",
+  "destination_parent": "6befb3c133de7fcf085a626fe7143eea5ab1b70d",
+  "verification": "All platform checks in separate-geomath.yml passed before publication.",
+  "published": true,
+  "checks": [
+    "scope",
+    "dart-format",
+    "flutter-analyze",
+    "flutter-test",
+    "node-canonical-adapter-tests",
+    "python-tooling-tests",
+    "android-debug-apk"
+  ]
+}
