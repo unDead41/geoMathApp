@@ -1,0 +1,40 @@
+{
+  "repository": "unDead41/geoMathApp",
+  "original_branches": [
+    {
+      "name": "app",
+      "sha": "9765d9a99a28d4e34e2e281f80ea585170759b5e"
+    },
+    {
+      "name": "app-cloud-game",
+      "sha": "41e3640edc7f2dfe5a19a5669a6ef75d19d9284c"
+    },
+    {
+      "name": "app-foundation",
+      "sha": "6e252449a55da46066892d7ed2fb00c814733331"
+    },
+    {
+      "name": "app-integration",
+      "sha": "62857941abca5e26ca7a24dccd236da12933a1d7"
+    },
+    {
+      "name": "app-learning",
+      "sha": "6e46d649a38fcb2aae78ec79ab8e712976b6bd19"
+    },
+    {
+      "name": "app-uiux-refinement",
+      "sha": "eaeac350dd92b5922346bde78f6a84980142a554"
+    },
+    {
+      "name": "main",
+      "sha": "1b5cef1ed1c3dfd3737f3b03360451826af36421"
+    }
+  ],
+  "candidate_branch": "chore/repository-cleanup",
+  "candidate_sha": "c6c1f75bea429059e83f2ce421d3a0c963f8c364",
+  "maintenance_branch": "maintenance/cleanup-20261106",
+  "verified_main_sha": "c6c1f75bea429059e83f2ce421d3a0c963f8c364",
+  "verification_run_id": 42219852843,
+  "archive_tag": "archive/app-before-cleanup-20261106",
+  "archive_tree_policy": "Current reviewed main tree; all exact original heads are archive commit parents."
+}
