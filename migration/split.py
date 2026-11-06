@@ -229,6 +229,9 @@ def prepare(platform):
     if platform == 'app':
         git('merge', '--no-ff', '--no-commit', filtered['app-cloud-game'])
         git('commit', '-m', 'Merge adaptive AI into the latest GeoMath App UI/UX')
+        git('apply', str(ROOT / 'migration/app-integration.patch'))
+        git('add', 'apps/geomath_flutter/lib/features/ai_battle/presentation/ai_battle_screen.dart')
+        git('commit', '-m', 'Scope AI scroll persistence to setup, attempt and question')
     assembled_parent = git('rev-parse', 'HEAD', capture=True)
     target = f'https://github.com/{expected_repo}.git'
     target_head = os.environ['GITHUB_SHA']

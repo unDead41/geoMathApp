@@ -5,7 +5,7 @@ on:
     paths:
       - '.github/workflows/separate-geomath.yml'
       - 'migration/split.py'
-      - 'migration/app-merge.patch'
+      - 'migration/app-integration.patch'
   workflow_dispatch:
 permissions:
   contents: write
@@ -43,6 +43,7 @@ jobs:
           flutter pub get
           dart format --output=none --set-exit-if-changed lib test integration_test test_driver
           flutter analyze
+          flutter test test/features/ai_battle/presentation/ai_battle_screen_test.dart --plain-name 'question transitions reset vertical position while preferences retain it'
           flutter test
           node --test tools/contracts/verify_exports.test.mjs test/foundation/native_adapter_contract.test.mjs test/features/learning/bundle/*.test.mjs test/features/learning/surface/*.test.mjs test/features/learning/studio/checkpoint_schema_parity.test.mjs
           python3 -m unittest discover -s tools/android -p 'test_*.py'
