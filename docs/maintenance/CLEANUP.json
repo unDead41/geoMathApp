@@ -1,0 +1,530 @@
+{
+  "schema_version": 1,
+  "status": "prepared_for_verification",
+  "repository": "unDead41/geoMathApp",
+  "date_malaysia": "2026-11-06",
+  "version": "0.3.1+5",
+  "base_main": "1b5cef1ed1c3dfd3737f3b03360451826af36421",
+  "original_branches": [
+    {
+      "name": "app",
+      "sha": "9765d9a99a28d4e34e2e281f80ea585170759b5e"
+    },
+    {
+      "name": "app-cloud-game",
+      "sha": "41e3640edc7f2dfe5a19a5669a6ef75d19d9284c"
+    },
+    {
+      "name": "app-foundation",
+      "sha": "6e252449a55da46066892d7ed2fb00c814733331"
+    },
+    {
+      "name": "app-integration",
+      "sha": "62857941abca5e26ca7a24dccd236da12933a1d7"
+    },
+    {
+      "name": "app-learning",
+      "sha": "6e46d649a38fcb2aae78ec79ab8e712976b6bd19"
+    },
+    {
+      "name": "app-uiux-refinement",
+      "sha": "eaeac350dd92b5922346bde78f6a84980142a554"
+    },
+    {
+      "name": "main",
+      "sha": "1b5cef1ed1c3dfd3737f3b03360451826af36421"
+    }
+  ],
+  "archive_tag": "archive/app-before-cleanup-20261106",
+  "target_active_branches": [
+    "main"
+  ],
+  "integrated_changes": [
+    "All six historical App branches are represented in main; endpoint comparisons retain current main fixes.",
+    "The latest app head contributes a typed AI scroll key, adaptive navigation regressions, real SQLite upgrade/reopen/actor-isolation tests and continuation evidence.",
+    "All eleven-model bundled offline assets, canonical source locks, dependency lock, Android identity and signing configuration are retained.",
+    "Completed migration scripts/workflows are removed; source-split receipts and original mockups/evidence remain archived in context."
+  ],
+  "removed_files": [
+    {
+      "path": "migration/PLAN.md",
+      "git_blob": "c024cc511b80e55cfb1baa38f831a797e1332bfd",
+      "bytes": 3164
+    },
+    {
+      "path": "migration/app-ci.yml",
+      "git_blob": "9326705558ee57a96b91e5850bd49363f81635ca",
+      "bytes": 1175
+    },
+    {
+      "path": "migration/app-integration.patch",
+      "git_blob": "684891fb1ec342a753c733dbda55f891572cc0d7",
+      "bytes": 1130
+    },
+    {
+      "path": "migration/check_repository_scope.py",
+      "git_blob": "e06241504f03eedd19beb429dadf76d4f4e74f44",
+      "bytes": 1475
+    },
+    {
+      "path": "migration/digital-ci.yml",
+      "git_blob": "fbb0067c0df3c68013a95a2a944320f9a877a6d1",
+      "bytes": 768
+    },
+    {
+      "path": "migration/receipt.json",
+      "git_blob": "0b353059ad96b14f9ed0f0d7a5b653bb1934e885",
+      "bytes": 1893
+    },
+    {
+      "path": "migration/sources.json",
+      "git_blob": "f018d00a64ba4f4f6951a4326248e5de9dc01c3a",
+      "bytes": 5341
+    },
+    {
+      "path": "migration/split.py",
+      "git_blob": "300b73ed7febe25a991bf3efa591e0b7149703bb",
+      "bytes": 16858
+    },
+    {
+      "path": ".github/workflows/separate-geomath.yml",
+      "git_blob": "08777ef3e0915039eab100d39cc935bb7a2366e3",
+      "bytes": 2357
+    }
+  ],
+  "protected_source_blobs": {
+    "apps/geomath_flutter/android/.gitignore": "09e3a417801a4ccaf6639c14d1c346d94cf335a1",
+    "apps/geomath_flutter/android/app/build.gradle.kts": "8c608fb549716f8f4c5b4d335e88f9fbd8a10c92",
+    "apps/geomath_flutter/android/app/src/debug/AndroidManifest.xml": "399f6981d5d35475eb18e6068ae67cdd7c731978",
+    "apps/geomath_flutter/android/app/src/main/AndroidManifest.xml": "39c4b91ab9dd891d41f46511766ee6e7c5a7d21b",
+    "apps/geomath_flutter/android/app/src/main/kotlin/com/geomath/dev/MainActivity.kt": "95a6f6e3a9772b82f3396c237efd1342ed0ff9fc",
+    "apps/geomath_flutter/android/app/src/main/res/drawable-v21/launch_background.xml": "f74085f3f6a2b995f8ad1f9ff7b2c46dc118a9e0",
+    "apps/geomath_flutter/android/app/src/main/res/drawable/launch_background.xml": "304732f8842013497e14bd02f67a55f2614fb8f7",
+    "apps/geomath_flutter/android/app/src/main/res/mipmap-hdpi/ic_launcher.png": "db77bb4b7b0906d62b1847e87f15cdcacf6a4f29",
+    "apps/geomath_flutter/android/app/src/main/res/mipmap-mdpi/ic_launcher.png": "17987b79bb8a35cc66c3c1fd44f5a5526c1b78be",
+    "apps/geomath_flutter/android/app/src/main/res/mipmap-xhdpi/ic_launcher.png": "09d4391482be68e9e4a07fab769b5de337d16eb1",
+    "apps/geomath_flutter/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png": "d5f1c8d34e7a88e3f88bea192c3a370d44689c3c",
+    "apps/geomath_flutter/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png": "4d6372eebdb28e45604e46eeda8dd24651419bc0",
+    "apps/geomath_flutter/android/app/src/main/res/values-night/styles.xml": "06952be745f9fa6fa75196e830d9578eb2ee631d",
+    "apps/geomath_flutter/android/app/src/main/res/values/styles.xml": "cb1ef88056edd1caf99a935e434e7ff6943a0ef6",
+    "apps/geomath_flutter/android/app/src/profile/AndroidManifest.xml": "399f6981d5d35475eb18e6068ae67cdd7c731978",
+    "apps/geomath_flutter/android/build.gradle.kts": "dbee657bb5b9158516486b3a1b47ef8b6fc72a2a",
+    "apps/geomath_flutter/android/gradle.properties": "90d9db6c4e0b1bc572f6a0ea59475116587cedbc",
+    "apps/geomath_flutter/android/gradle/wrapper/gradle-wrapper.properties": "a20f2c46d22ec5ccde3c08951676fda38a72949f",
+    "apps/geomath_flutter/android/settings.gradle.kts": "b28021a9101801eb907b881a293d4cf9bbf84456",
+    "apps/geomath_flutter/assets/contracts/bank15.json": "6b488595dc70ea1eb39740c2dc2751ef7e97b336",
+    "apps/geomath_flutter/assets/contracts/cards/cone-net.svg": "fe74dfb1103b70da06a87ddb33d9755bebc27050",
+    "apps/geomath_flutter/assets/contracts/cards/cone-solid.svg": "8deb8b66a53798c6f554b9ae69b8982bddb73a25",
+    "apps/geomath_flutter/assets/contracts/cards/cube-net.svg": "2ce48109fee859051648a1ffee4bf34b81141a7d",
+    "apps/geomath_flutter/assets/contracts/cards/cube-solid.svg": "661283deda58ae225693ffd68eff81fc47a6b3ed",
+    "apps/geomath_flutter/assets/contracts/cards/cuboid-net.svg": "e3ee7ae40f4aeab0ad8191b4d4c19575f5d0a337",
+    "apps/geomath_flutter/assets/contracts/cards/cuboid-solid.svg": "cd00b83eb6e6ad7259e4b081ac3e3fe96aee8b8f",
+    "apps/geomath_flutter/assets/contracts/cards/cylinder-net.svg": "c1ba423eabed6671210e1513f23be8092a89a971",
+    "apps/geomath_flutter/assets/contracts/cards/cylinder-solid.svg": "534ce1b914aff3a46d03a292f68941adcdfefe44",
+    "apps/geomath_flutter/assets/contracts/cards/pyramid-net.svg": "3b16a63046dd6c23e0084de35ebe55b4b016fd5c",
+    "apps/geomath_flutter/assets/contracts/cards/pyramid-solid.svg": "d6b7f107b743aec8de7b08641e38ae1cd2aef1d6",
+    "apps/geomath_flutter/assets/contracts/engine_golden.json": "82502ab93c3e6ae2a84c29668cdafd9deba8dfc0",
+    "apps/geomath_flutter/assets/contracts/geometry_cards.json": "f3c4571dc5a04649dea453c36a28316048c5a5a0",
+    "apps/geomath_flutter/assets/contracts/learning_catalogue.json": "890f3cfee47c60b49df01017969d9d7a77c8dbd3",
+    "apps/geomath_flutter/assets/contracts/manifest.json": "b98e9871924610dba51ab9ec0a6a648437030157",
+    "apps/geomath_flutter/assets/contracts/ruleset.json": "49ba3715a22791a8422c359849a9a2edd2230986",
+    "apps/geomath_flutter/assets/module/.gitattributes": "924699dd4f0a1ad52dbb247e60ffd02ad77c9e82",
+    "apps/geomath_flutter/assets/module/canonical-module.html": "3af0469979d878c8e605d093db1be0c0649c6509",
+    "apps/geomath_flutter/assets/module/index.html": "0a650da423646d9f63751f046d83827bd755de7c",
+    "apps/geomath_flutter/assets/module/manifest.json": "1648fe35eae5c8471bb5fc199e468eedaa3635c4",
+    "apps/geomath_flutter/assets/module/native-adapter.js": "2a0c1f17f1c14dab0e02a314ff489c2a7869fe64",
+    "apps/geomath_flutter/docs/source_lock.json": "85d6cc61192653ef8c5f955387638c2319282c6e",
+    "apps/geomath_flutter/lib/app/app.dart": "4502345b5babe1883c672282e5eeb8a1834cd448",
+    "apps/geomath_flutter/lib/app/app_dependencies.dart": "5e5f45102874f6e213a7f568451ecf398a67a8ac",
+    "apps/geomath_flutter/lib/app/app_router.dart": "ff66790146bdf32eac7a5224478869f0a9f73b18",
+    "apps/geomath_flutter/lib/app/cloud_game_features.dart": "21e13ec24127bb6135beb8a7dcef92c96031dab2",
+    "apps/geomath_flutter/lib/app/feature_previews.dart": "7f7fd65f3ab9bf0e5dcd5ac60d3104c22543340a",
+    "apps/geomath_flutter/lib/app/foundation_strings.dart": "2bfd228aa0e2cd52fc241d69b430b091719e8a15",
+    "apps/geomath_flutter/lib/app/production_features.dart": "ae590f9463c831d95f9ad544c0502e4f9007d497",
+    "apps/geomath_flutter/lib/app/public_backend_configuration.dart": "616d6816ad91a56e1010d4e3f7f8c9524c77338f",
+    "apps/geomath_flutter/lib/core/audio/audio_coordinator.dart": "6bc8acda35ccdcae1ef11a86526dc5520fa35122",
+    "apps/geomath_flutter/lib/core/design/design.dart": "810c10757b35be9a9f601a88b074e836c437ab98",
+    "apps/geomath_flutter/lib/core/design/design_tokens.g.dart": "2e8825d7b1ae2ec83efac0ded60be49b37057989",
+    "apps/geomath_flutter/lib/core/design/face_palette.dart": "dd5fecbd558fbbb1af25a4f81f6599d74a26534d",
+    "apps/geomath_flutter/lib/core/design/geomath_text_scaler.dart": "20c2d56c436fe129037827bfc9e1256a373ddb65",
+    "apps/geomath_flutter/lib/core/design/geomath_theme.dart": "3907125d9a14bb4741020cb066c7a99e2c1982e4",
+    "apps/geomath_flutter/lib/core/features/README.md": "68abb1c8032ad0c05563ee9344a757f304ff6466",
+    "apps/geomath_flutter/lib/core/features/feature_composition.dart": "77c9d1f64610ac3cbd08f8f0543bd7bd4a3ed366",
+    "apps/geomath_flutter/lib/core/features/feature_contribution.dart": "dc176d683b4c52c94d14ef66fa34d5859bceb416",
+    "apps/geomath_flutter/lib/core/features/feature_localizations.dart": "3cdd43502485fa97bb1b2fe590bf33297ef16826",
+    "apps/geomath_flutter/lib/core/features/service_registry.dart": "ec724c7e800751091ee56fe6ef4c448808b34f2c",
+    "apps/geomath_flutter/lib/core/geometry/geometry_card_provider.dart": "02598ac492b6f6a39ce562479ed36abd6ea84497",
+    "apps/geomath_flutter/lib/core/geometry/geometry_card_view.dart": "f4ad8817e1d9c7cda6524a49c19e46374ae8e8ae",
+    "apps/geomath_flutter/lib/core/l10n/app_strings.dart": "967179a3a2a77d71cdb8d142e997884164957aab",
+    "apps/geomath_flutter/lib/core/lifecycle/app_lifecycle.dart": "96ef10cac9bed23a29c92e5dac561634e20054e4",
+    "apps/geomath_flutter/lib/core/module/README.md": "755baf5fb6fc4fd09e57b603af17c3025a91c653",
+    "apps/geomath_flutter/lib/core/module/module_host_bridge.dart": "3488a351ce475a9ba72025bc07cd1dcdc909d36c",
+    "apps/geomath_flutter/lib/core/navigation/app_navigation.dart": "6d13f3a4804add295819be5e6d93b7c2412a7435",
+    "apps/geomath_flutter/lib/core/network/network_policy.dart": "85682bc1431375bd6c7a89382945f35dafc07ead",
+    "apps/geomath_flutter/lib/core/preferences/app_preferences.dart": "6a68a45ac65ad55a9aa438df176d77f691d22276",
+    "apps/geomath_flutter/lib/core/preferences/preferences.dart": "13a16fde82bb85649286bb9d9e730636dfcb67c8",
+    "apps/geomath_flutter/lib/core/preferences/preferences_repository.dart": "b46bd47737b76adec975ffdf47cef05c3075eb0d",
+    "apps/geomath_flutter/lib/core/records/formative_record.dart": "22b985427d66f15900073b08fa0fb994ae704317",
+    "apps/geomath_flutter/lib/core/records/formative_records.dart": "9e51efc60c855e83a2bac6f04996ca9bbb7abf49",
+    "apps/geomath_flutter/lib/core/records/local_formative_records.dart": "4ab94b183c91a075a89271d4df708b0bb57e33da",
+    "apps/geomath_flutter/lib/core/result.dart": "fc1db5d8ad149ceffc27dd986c9c7aedbbc373fc",
+    "apps/geomath_flutter/lib/core/runtime/clock.dart": "fe0613011c473618fac88fd597d5b9e07b2b8876",
+    "apps/geomath_flutter/lib/core/runtime/random_source.dart": "6469c00beb0bd55abb7f67886656ee86981d148e",
+    "apps/geomath_flutter/lib/core/session/actor_binding.dart": "de79b56a4f70af98c44c5f79948e420618a4a7e3",
+    "apps/geomath_flutter/lib/core/session/auth_session.dart": "a9136aafa9a23a3d65857abd408ae7cfbad1789d",
+    "apps/geomath_flutter/lib/core/session/guest_identity_store.dart": "26215d5e1ec10aa3b4cd110dd0d7e9eb6e307c0c",
+    "apps/geomath_flutter/lib/core/session/session_store.dart": "4a7efcdb47b0c5d2e84cbe36792b44e3e3d8e15a",
+    "apps/geomath_flutter/lib/core/storage/app_database.dart": "d72872c6131107f5a66a1f611ac411ccb41a2011",
+    "apps/geomath_flutter/lib/core/storage/formative_schema.dart": "7be22bc27fb0bde23b2c10a1b6b674b4b3c68a3b",
+    "apps/geomath_flutter/lib/core/storage/migration.dart": "c4d7abdb309576d0ad19c225f851f5e660709cc2",
+    "apps/geomath_flutter/lib/core/storage/sqlite_app_database.dart": "3dc0720ea2da48bdb5d5afd93d2bc862c176b915",
+    "apps/geomath_flutter/lib/core/widgets/confirmation_sheet.dart": "e1263a05dcd9cc03411f722bc9720ef400a0ce67",
+    "apps/geomath_flutter/lib/core/widgets/controls.dart": "5ee117dc46492339d6fe0876f871caa7442a5186",
+    "apps/geomath_flutter/lib/core/widgets/destination_bar.dart": "71b081f85190963984f2e53283282e12610d9819",
+    "apps/geomath_flutter/lib/core/widgets/geo_feedback.dart": "4d849529293b7bc32c67007e5d2253e5e5a54b69",
+    "apps/geomath_flutter/lib/core/widgets/geo_illustration.dart": "c06ef39710afdc696a253db268e3fef69203a527",
+    "apps/geomath_flutter/lib/core/widgets/geomath_scaffold.dart": "a6501d4e24f34540fe4d30af6337f091fd9a33d9",
+    "apps/geomath_flutter/lib/core/widgets/model_controls.dart": "52bc570d19481274e28b8d1e3e05b518ebc7f6e5",
+    "apps/geomath_flutter/lib/core/widgets/states.dart": "1f555a0c81b5a6dc6321a95744d677eeb2633bfe",
+    "apps/geomath_flutter/lib/core/widgets/widgets.dart": "48a9d50e75fe1c6eb451aefd9db7b49219f5592f",
+    "apps/geomath_flutter/lib/dev/cloud_game_features.dart": "81e4e3d85e879ce8e3045e3593e78aeacfef8704",
+    "apps/geomath_flutter/lib/dev/cloud_game_main.dart": "ce92139a9e825b3be2b221d7b0b46d184be630e4",
+    "apps/geomath_flutter/lib/dev/learning_main.dart": "30e77ca544d667bf0fd566f52d6e1b02e54782e8",
+    "apps/geomath_flutter/lib/features/ai_battle/ai_battle_feature.dart": "e77280f7f0e99f000974a2fe32b0c74052f96a38",
+    "apps/geomath_flutter/lib/features/ai_battle/ai_battle_strings.dart": "667c36dfb392f8b778868752fd1049f91fe677b7",
+    "apps/geomath_flutter/lib/features/ai_battle/application/ai_battle_controller.dart": "4ac93807b1f6453ed6ea2c8c2e6bb19599065ae8",
+    "apps/geomath_flutter/lib/features/ai_battle/data/ai_battle_repository.dart": "c6e122de70528d1cc55966fca4c5f60647a82228",
+    "apps/geomath_flutter/lib/features/ai_battle/domain/ai_battle_game.dart": "955c7421778da1c29cc6a2d286e82adb949cf74e",
+    "apps/geomath_flutter/lib/features/ai_battle/domain/ai_policy.dart": "6fd4ecb114f87783d1aa4be866595d921023141f",
+    "apps/geomath_flutter/lib/features/ai_battle/presentation/ai_battle_screen.dart": "f8177f1f2adb0efd60a0440d862331cf41417730",
+    "apps/geomath_flutter/lib/features/auth/README.md": "ec10abc37172accbadb20e8d695627120c6559e9",
+    "apps/geomath_flutter/lib/features/auth/auth_feature.dart": "65c1cb67818f19593caa936a06bb593e44411072",
+    "apps/geomath_flutter/lib/features/auth/auth_services.dart": "5504f637033ac25498dc984b1f5e0295dbca7757",
+    "apps/geomath_flutter/lib/features/auth/auth_strings.dart": "7ad6e6f50996156fc6c4554ff1e94c92e0668440",
+    "apps/geomath_flutter/lib/features/auth/data/auth_repository.dart": "2f04facf232fba23adbb5831470f4c5b2080a322",
+    "apps/geomath_flutter/lib/features/auth/data/auth_transport.dart": "ee7e7a871bd91f2b01321ab0e23fc8b7ab84cad9",
+    "apps/geomath_flutter/lib/features/auth/data/cloud_gateway.dart": "76cf5c77f9d4a9b9f5047508bcddfb8f00a20ef7",
+    "apps/geomath_flutter/lib/features/auth/data/native_auth_driver.dart": "f6b83eeb0485119920afa654789a202595bdda9b",
+    "apps/geomath_flutter/lib/features/auth/data/native_auth_links.dart": "afc17a166f0f371a25b595e42afef031bf45f9e6",
+    "apps/geomath_flutter/lib/features/auth/data/native_auth_repository.dart": "3024bdd81632f3eb7050302076826fcc6417d228",
+    "apps/geomath_flutter/lib/features/auth/presentation/auth_screen.dart": "5cdd61634686f0be75c6695a2804d9c1ff7f5a5d",
+    "apps/geomath_flutter/lib/features/auth/presentation/sessions_screen.dart": "f02c7c9b8c116ea5c53d851a972ce65b25f548d7",
+    "apps/geomath_flutter/lib/features/classroom/application/classroom_controller.dart": "cc76cc452109445ec64cef64b6b134ca239d6e2b",
+    "apps/geomath_flutter/lib/features/classroom/classroom_feature.dart": "3d75e0d5b44eff64c38076c4adc753566c471249",
+    "apps/geomath_flutter/lib/features/classroom/data/classroom_bank.dart": "d4a0c92a9211672e3bb5e9a1accbd1d20af3137d",
+    "apps/geomath_flutter/lib/features/classroom/data/classroom_question_copy.g.dart": "8be602df5482de3587b299d1a1634f3a2502f40c",
+    "apps/geomath_flutter/lib/features/classroom/data/classroom_repository.dart": "dc40c48bd8d338d389f7442eb1110cdbd49cc278",
+    "apps/geomath_flutter/lib/features/classroom/domain/classroom_models.dart": "706ffccbfd1ca960a699b6972e35c95729d286c2",
+    "apps/geomath_flutter/lib/features/classroom/presentation/classroom_screen.dart": "ddf90e6b4e2abe6f1f843c04fa4228331adcad4a",
+    "apps/geomath_flutter/lib/features/classroom/presentation/classroom_strings.dart": "028a55a985464a712b8644a2cb2ac2da2cf35738",
+    "apps/geomath_flutter/lib/features/duel/duel_controller.dart": "226ddaeeb674a857d66322e56cccd400028a4b92",
+    "apps/geomath_flutter/lib/features/duel/duel_feature.dart": "008e168931ad396cb3943f18074746a9e4854cd1",
+    "apps/geomath_flutter/lib/features/duel/duel_projection.dart": "ce4a16094194d3db8cfef3bf60db76f23cebdc12",
+    "apps/geomath_flutter/lib/features/duel/duel_protected_store.dart": "15649a0331b1ad6f082a6c3ea83271617c12bd35",
+    "apps/geomath_flutter/lib/features/duel/duel_screen.dart": "be263d7397acf05a76c12dea0f01dc98603d954c",
+    "apps/geomath_flutter/lib/features/duel/duel_strings.dart": "95c2bea35dab99603b697402edf886d0927d6d5b",
+    "apps/geomath_flutter/lib/features/duel/duel_transport.dart": "2d5193f69865dd5e5a3b371109893b1edeb57e07",
+    "apps/geomath_flutter/lib/features/duel/presentation/game_card_carousel.dart": "d7f35121b77c55bc2d913498fabeec348aaad044",
+    "apps/geomath_flutter/lib/features/duel/presentation/game_card_drag.dart": "b098c50517a7fbc59250ca9937333c611f766647",
+    "apps/geomath_flutter/lib/features/duel/presentation/game_question_content.dart": "445c5b1fd379fae549a85f97f8062129099f6546",
+    "apps/geomath_flutter/lib/features/help/guide_screen.dart": "d7c371b25dc4e831fd67675d3f9668edad4746f4",
+    "apps/geomath_flutter/lib/features/help/help_screen.dart": "698aef2df455e98921e1bb25d7d8c9ec25f05db3",
+    "apps/geomath_flutter/lib/features/help/local_report.dart": "636e56c6b723008e10455c98d513ec8a7fad89c6",
+    "apps/geomath_flutter/lib/features/help/report_screen.dart": "f9df13a7401a3c57aa922440f272d7339d11ab1b",
+    "apps/geomath_flutter/lib/features/home/home_screen.dart": "e32f1ff6c4848f3f45016a35c0cb9507e945f907",
+    "apps/geomath_flutter/lib/features/home/home_study_summary.dart": "6863032182d03301db744e435598240ca1cfbbf7",
+    "apps/geomath_flutter/lib/features/home/module_preview_page.dart": "885d6ec9f9da022cc0da9c11f0baf0f0ec3735a5",
+    "apps/geomath_flutter/lib/features/learning/application/learning_module_controller.dart": "04047fcdaaa8ede7f491f9f451b3211836212f42",
+    "apps/geomath_flutter/lib/features/learning/application/learning_services.dart": "b94b49744aeb8496c3937559bd1c74c6f82b4cbc",
+    "apps/geomath_flutter/lib/features/learning/labs/lab_strings.dart": "6b0a8d9a162b790335f0cfe4b2bf3248c60127e5",
+    "apps/geomath_flutter/lib/features/learning/labs/labs_hub.dart": "9b7f8137a9c9b061dfd0ce6de79e713ca6cff9dc",
+    "apps/geomath_flutter/lib/features/learning/labs/net_volume_pages.dart": "a0742f861d687c752764b2c4d8b56533251750df",
+    "apps/geomath_flutter/lib/features/learning/labs/surface_pages.dart": "2c177fe7d4f9767be60ca1db1acf54c3dbe10a62",
+    "apps/geomath_flutter/lib/features/learning/labs/surface_strings.dart": "70c32d392a129ec7d7eaf51429705fe91921ac65",
+    "apps/geomath_flutter/lib/features/learning/learning_catalogue.dart": "76200a4b37ce3bedee74984d3c95ea124dac2c9f",
+    "apps/geomath_flutter/lib/features/learning/learning_feature.dart": "984b95a29a0754b66bbe807d87cf914e49e11b9a",
+    "apps/geomath_flutter/lib/features/learning/learning_strings.dart": "8d28edad89af2a9fc1a267c073b9da8a7efe6474",
+    "apps/geomath_flutter/lib/features/learning/module_asset_repository.dart": "b445681ff6f40d2f1a4dc07f6cde48a1f118d3de",
+    "apps/geomath_flutter/lib/features/learning/module_spike_host.dart": "a89f1aeccd009e2b3aadedcb5df7275464921e5a",
+    "apps/geomath_flutter/lib/features/learning/persistence/learning_checkpoint_repository.dart": "0e7809026ec76206ce0bdc9e70841d87dbccdc24",
+    "apps/geomath_flutter/lib/features/learning/persistence/learning_checkpoint_schema.dart": "4d4ff1a62f01731d918eddf98f7144ee9a3f6422",
+    "apps/geomath_flutter/lib/features/learning/persistence/learning_reflection_controller.dart": "8bded9d09f849430e327fd95a0c17877a37b8a32",
+    "apps/geomath_flutter/lib/features/learning/presentation/explore_pages.dart": "e06521b5057bfb079902e074a567cb0c16971c82",
+    "apps/geomath_flutter/lib/features/learning/presentation/learning_hub.dart": "9faf9c52b2fe699e459d780c11a75580ecd63c9d",
+    "apps/geomath_flutter/lib/features/learning/presentation/learning_model_controls.dart": "b05b2fae842acbf2f5a19fea51df75e212b35ace",
+    "apps/geomath_flutter/lib/features/learning/presentation/learning_module_page.dart": "3912d15466908086acbbd3a573c11ddbf1434a81",
+    "apps/geomath_flutter/lib/features/learning/presentation/learning_module_workspace.dart": "c1bb5bcbfc24c88810c82f545a132668c269fdbc",
+    "apps/geomath_flutter/lib/features/learning/presentation/learning_shape_carousel.dart": "942dca4c129c5595651978d3b333a212cf5426d8",
+    "apps/geomath_flutter/lib/features/learning/studio/learning_records_page.dart": "e9e3ee892cd1fad7aee296e08fbaed8b9766a09b",
+    "apps/geomath_flutter/lib/features/learning/studio/studio_pages.dart": "a4657f3ed6068b5dd96a73420ccdc5f98a0ffcc4",
+    "apps/geomath_flutter/lib/features/learning/studio/studio_strings.dart": "d08bdac709034f5a7f8b3ad7f6fe40835b627a03",
+    "apps/geomath_flutter/lib/features/preferences/preferences_screen.dart": "a680d350d01ac20848e5dc60d2bf8f6ce085c101",
+    "apps/geomath_flutter/lib/features/profile/data/profile_drafts.dart": "390d9e3d7ef694a11d8b4c0ac2c73d158470f727",
+    "apps/geomath_flutter/lib/features/profile/data/profile_repository.dart": "dbf6f2bdc84b7a1bda9b6e54c4e0fa5a4016babf",
+    "apps/geomath_flutter/lib/features/profile/presentation/profile_screen.dart": "08223f64514b97786ea5d3bc6dd4deaa0907a97b",
+    "apps/geomath_flutter/lib/features/profile/profile_feature.dart": "7ae1a578f072796831b050849f0e2757137f1286",
+    "apps/geomath_flutter/lib/features/profile/profile_services.dart": "aa9251b7dbd85b482e72cc8ecbfb817190a2e888",
+    "apps/geomath_flutter/lib/features/profile/profile_strings.dart": "aa20441d288a0ea09c992d2e8e8727e6905a812d",
+    "apps/geomath_flutter/lib/features/solo/data/solo_repository.dart": "cba1775b811dd705ceb23e4981f1e96823460b42",
+    "apps/geomath_flutter/lib/features/solo/domain/solo_bank.dart": "087e61c9c0fc178e23df7250c68e5fc721a21ad9",
+    "apps/geomath_flutter/lib/features/solo/domain/solo_game.dart": "ce16b2c7004d55d781744987e46a20d07746f698",
+    "apps/geomath_flutter/lib/features/solo/presentation/solo_pages.dart": "f8e73cf951eb456ef5a0dc4a2e479a48d5eb696b",
+    "apps/geomath_flutter/lib/features/solo/presentation/solo_strings.dart": "a7fa16c99da0aefae674fd2a66f5d2dae12ad9f3",
+    "apps/geomath_flutter/lib/features/solo/solo_controller.dart": "de666aac0ee9628aa27808b1870bbf48b732d569",
+    "apps/geomath_flutter/lib/features/solo/solo_feature.dart": "95fb5c6159695b8b607ec6c1f20137d2261aeac8",
+    "apps/geomath_flutter/lib/features/sync/application/formative_sync_controller.dart": "7d849d9f28a97e75053d9f8ab84aebe8304408c7",
+    "apps/geomath_flutter/lib/features/sync/data/sqlite_formative_outbox.dart": "3698268a4cc8961a522c75520d0495dcec95d461",
+    "apps/geomath_flutter/lib/features/sync/data/sync_formative_record_writer.dart": "4af0ff68dfb6badf4d82c10f02a72a3fa8ebe1cf",
+    "apps/geomath_flutter/lib/features/sync/data/sync_receipt_schema.dart": "e117c36aa9914ef56d49a047c8ce8720dc65147f",
+    "apps/geomath_flutter/lib/features/sync/presentation/sync_screen.dart": "75ce9219d372e769b621a9f641454ff305087021",
+    "apps/geomath_flutter/lib/features/sync/sync_feature.dart": "2057170d18ef19108a9acf89da7115871b2c0c44",
+    "apps/geomath_flutter/lib/main.dart": "23c54a0ab95d2ee886a44ee8ea347d0285f87b6e",
+    "apps/geomath_flutter/pubspec.lock": "9c12663100bac3daf10223a7ce8388186b2c8dc0"
+  },
+  "binary_assets": {
+    "apps/geomath_flutter/android/app/src/main/res/mipmap-hdpi/ic_launcher.png": {
+      "git_blob": "db77bb4b7b0906d62b1847e87f15cdcacf6a4f29",
+      "bytes": 544
+    },
+    "apps/geomath_flutter/android/app/src/main/res/mipmap-mdpi/ic_launcher.png": {
+      "git_blob": "17987b79bb8a35cc66c3c1fd44f5a5526c1b78be",
+      "bytes": 442
+    },
+    "apps/geomath_flutter/android/app/src/main/res/mipmap-xhdpi/ic_launcher.png": {
+      "git_blob": "09d4391482be68e9e4a07fab769b5de337d16eb1",
+      "bytes": 721
+    },
+    "apps/geomath_flutter/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png": {
+      "git_blob": "d5f1c8d34e7a88e3f88bea192c3a370d44689c3c",
+      "bytes": 1031
+    },
+    "apps/geomath_flutter/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png": {
+      "git_blob": "4d6372eebdb28e45604e46eeda8dd24651419bc0",
+      "bytes": 1443
+    },
+    "apps/geomath_flutter/assets/contracts/cards/cone-net.svg": {
+      "git_blob": "fe74dfb1103b70da06a87ddb33d9755bebc27050",
+      "bytes": 15377
+    },
+    "apps/geomath_flutter/assets/contracts/cards/cone-solid.svg": {
+      "git_blob": "8deb8b66a53798c6f554b9ae69b8982bddb73a25",
+      "bytes": 15578
+    },
+    "apps/geomath_flutter/assets/contracts/cards/cube-net.svg": {
+      "git_blob": "2ce48109fee859051648a1ffee4bf34b81141a7d",
+      "bytes": 1056
+    },
+    "apps/geomath_flutter/assets/contracts/cards/cube-solid.svg": {
+      "git_blob": "661283deda58ae225693ffd68eff81fc47a6b3ed",
+      "bytes": 1064
+    },
+    "apps/geomath_flutter/assets/contracts/cards/cuboid-net.svg": {
+      "git_blob": "e3ee7ae40f4aeab0ad8191b4d4c19575f5d0a337",
+      "bytes": 1058
+    },
+    "apps/geomath_flutter/assets/contracts/cards/cuboid-solid.svg": {
+      "git_blob": "cd00b83eb6e6ad7259e4b081ac3e3fe96aee8b8f",
+      "bytes": 1063
+    },
+    "apps/geomath_flutter/assets/contracts/cards/cylinder-net.svg": {
+      "git_blob": "c1ba423eabed6671210e1513f23be8092a89a971",
+      "bytes": 19230
+    },
+    "apps/geomath_flutter/assets/contracts/cards/cylinder-solid.svg": {
+      "git_blob": "534ce1b914aff3a46d03a292f68941adcdfefe44",
+      "bytes": 19248
+    },
+    "apps/geomath_flutter/assets/contracts/cards/pyramid-net.svg": {
+      "git_blob": "3b16a63046dd6c23e0084de35ebe55b4b016fd5c",
+      "bytes": 827
+    },
+    "apps/geomath_flutter/assets/contracts/cards/pyramid-solid.svg": {
+      "git_blob": "d6b7f107b743aec8de7b08641e38ae1cd2aef1d6",
+      "bytes": 833
+    },
+    "apps/geomath_flutter/docs/handoffs/app-cloud-game/ai-battle-20261106/previews/01-host-ai-setup-ms.png": {
+      "git_blob": "077c467e7eeff90f60ddd6bcb759afb2158b4be3",
+      "bytes": 191738
+    },
+    "apps/geomath_flutter/docs/handoffs/app-cloud-game/ai-battle-20261106/previews/02-host-ai-formula-solid-ms.png": {
+      "git_blob": "ab456bedb162b0b519866b2c1fffdf43d5d5edbd",
+      "bytes": 202222
+    },
+    "apps/geomath_flutter/docs/handoffs/app-cloud-game/ai-battle-20261106/previews/03-host-ai-net-carousel-ms.png": {
+      "git_blob": "77b862ca60d9030b5ee73658153bbcae6aec1901",
+      "bytes": 194448
+    },
+    "apps/geomath_flutter/docs/handoffs/app-cloud-game/ai-battle-20261106/previews/04-host-ai-hard-adapted-ms.png": {
+      "git_blob": "8ff35118cf855c954f91c3550445506e6d2e1ea8",
+      "bytes": 195744
+    },
+    "apps/geomath_flutter/docs/handoffs/app-cloud-game/ai-battle-20261106/previews/05-host-ai-results-ms.png": {
+      "git_blob": "8114f405c783f8a177267022dc672c8788d52bfd",
+      "bytes": 151299
+    },
+    "apps/geomath_flutter/docs/handoffs/app-cloud-game/evidence/host-rendered/01-host-play-ms-light-100.png": {
+      "git_blob": "989945ea932936eda3d8cdfbc3c40a17b7067d53",
+      "bytes": 138811
+    },
+    "apps/geomath_flutter/docs/handoffs/app-cloud-game/evidence/host-rendered/02-host-play-en-dark-150.png": {
+      "git_blob": "95122caa4285b9368edb7459aaa0fcaf01a3623f",
+      "bytes": 153282
+    },
+    "apps/geomath_flutter/docs/handoffs/app-cloud-game/evidence/host-rendered/03-host-solo-question-en-light-100.png": {
+      "git_blob": "a67db60e5c64c7ce4c6aea6ae3df57f5ee896626",
+      "bytes": 132870
+    },
+    "apps/geomath_flutter/docs/handoffs/app-cloud-game/evidence/host-rendered/04-host-guest-profile-ms-light-100.png": {
+      "git_blob": "3e2e889242fa10a76a1f27a466381ccab45d6fc7",
+      "bytes": 66408
+    },
+    "apps/geomath_flutter/docs/handoffs/app-cloud-game/updates/2026-11-06/previews/01-host-solo-solid-math-ms.png": {
+      "git_blob": "d180f6b802ac52f1715af518d1c80f1ff78aa78e",
+      "bytes": 147039
+    },
+    "apps/geomath_flutter/docs/handoffs/app-cloud-game/updates/2026-11-06/previews/02-host-solo-net-ms.png": {
+      "git_blob": "1f98bee52db500b3337675428e2196aa18d6738c",
+      "bytes": 151546
+    },
+    "apps/geomath_flutter/docs/handoffs/app-cloud-game/updates/2026-11-06/previews/03-host-duel-entry-ms.png": {
+      "git_blob": "1c44235ca210bdec64979021dbe6096ddd67813b",
+      "bytes": 109211
+    },
+    "apps/geomath_flutter/docs/handoffs/app-cloud-game/updates/2026-11-06/previews/04-host-duel-active_B2-fixture-ms.png": {
+      "git_blob": "2e30ebe4ffab5bb8d2839a377760d117ce5e127f",
+      "bytes": 149408
+    },
+    "apps/geomath_flutter/docs/handoffs/app-cloud-game/updates/2026-11-06/previews/04-host-duel-active_C2-fixture-ms.png": {
+      "git_blob": "292d24210a68898e4044932fd8a3a7be54e3c711",
+      "bytes": 148463
+    },
+    "apps/geomath_flutter/docs/handoffs/app-cloud-game/updates/2026-11-06/previews/05-host-classroom-teacher-fixture-ms.png": {
+      "git_blob": "d59f8d7bf9d1ebfa4c5f79d8ac66b6f69b248510",
+      "bytes": 125597
+    },
+    "apps/geomath_flutter/docs/handoffs/app-cloud-game/updates/2026-11-06/previews/06-host-profile-editor-fixture-ms.png": {
+      "git_blob": "498060c99c26fae2cc531c5b635d36d085708e7d",
+      "bytes": 88071
+    },
+    "apps/geomath_flutter/docs/handoffs/app-foundation/evidence/android-test/01-home-actions.png": {
+      "git_blob": "d46426855920b0a8a4fbece5838647aa10e157dd",
+      "bytes": 82428
+    },
+    "apps/geomath_flutter/docs/handoffs/app-foundation/evidence/android-test/01-home-offline.png": {
+      "git_blob": "fc630ca458a6bfc51aa29c891916566c1ff35225",
+      "bytes": 69717
+    },
+    "apps/geomath_flutter/docs/handoffs/app-foundation/evidence/android-test/37-settings.png": {
+      "git_blob": "85581f96002abdb7641c6f48d133c0dfd7de95e1",
+      "bytes": 68929
+    },
+    "apps/geomath_flutter/docs/handoffs/app-foundation/evidence/android-test/last-screen.png": {
+      "git_blob": "d41bc66356440940f05ca2167a9497391829b0b2",
+      "bytes": 20915
+    },
+    "apps/geomath_flutter/docs/handoffs/app-foundation/evidence/android-test/module-preview.png": {
+      "git_blob": "408bf6ade7cd8acaa29804f82b1287a56672eed3",
+      "bytes": 20914
+    },
+    "apps/geomath_flutter/docs/handoffs/app-foundation/evidence/android/01-home-actions.png": {
+      "git_blob": "74cccd32c59673e9b72984949f26d343ccd27a66",
+      "bytes": 71905
+    },
+    "apps/geomath_flutter/docs/handoffs/app-foundation/evidence/android/01-home-offline.png": {
+      "git_blob": "d8c5cff4bf23a53b61123fd7a485720eadd16330",
+      "bytes": 69971
+    },
+    "apps/geomath_flutter/docs/handoffs/app-foundation/evidence/android/37-settings.png": {
+      "git_blob": "7ac103f4b082b12a9077c8738e30b3566b40a565",
+      "bytes": 69160
+    },
+    "apps/geomath_flutter/docs/handoffs/app-foundation/evidence/android/last-screen.png": {
+      "git_blob": "da584c9a68fc68caa1b4116e41039b340cf30073",
+      "bytes": 67889
+    },
+    "apps/geomath_flutter/docs/handoffs/app-foundation/evidence/android/module-preview.png": {
+      "git_blob": "12dd0862959eae99aeff3519a26024448e4a5546",
+      "bytes": 68891
+    },
+    "apps/geomath_flutter/docs/handoffs/app-foundation/evidence/ci-41963202642-last-screen.png": {
+      "git_blob": "ba93d92b804cd28bba21068dedac063963f9fb2f",
+      "bytes": 770655
+    },
+    "apps/geomath_flutter/docs/handoffs/app-uiux-refinement/screenshots/phone-home.png": {
+      "git_blob": "43b0c7419fdfce33320cf90a858e9b453c0cb235",
+      "bytes": 50436
+    },
+    "apps/geomath_flutter/docs/handoffs/app-uiux-refinement/screenshots/phone-learning.png": {
+      "git_blob": "cca1c4c06e20ac6555b7dcbbd54f2e782193557e",
+      "bytes": 62792
+    },
+    "apps/geomath_flutter/docs/handoffs/app-uiux-refinement/screenshots/tablet-large-text-settings.png": {
+      "git_blob": "653f726d56626f6335ed22de3b4a9885b058ffba",
+      "bytes": 51874
+    },
+    "apps/geomath_flutter/docs/handoffs/app-uiux-refinement/screenshots/tablet-learning.png": {
+      "git_blob": "c56a33abc93ae442180ca99092c5ce2ee6248a3c",
+      "bytes": 85456
+    },
+    "docs/geomath-app/assets/GeoMath_Aliran_UIUX_App.png": {
+      "git_blob": "03c320de3fa2c388987696a0dd9760dadd1c4f5d",
+      "bytes": 433731
+    },
+    "docs/geomath-app/assets/mockups/01-start-and-guide.png": {
+      "git_blob": "a2dfe46d7f94914f2beba2be4c58fe50a86ff26f",
+      "bytes": 1789186
+    },
+    "docs/geomath-app/assets/mockups/02-game-and-feedback.png": {
+      "git_blob": "351a59125d6d0d56dce9d69ee78e4768d9b57dc8",
+      "bytes": 1711865
+    },
+    "docs/geomath-app/assets/mockups/03-scoreboard-and-duel.png": {
+      "git_blob": "30dcfcc5c916b49995a01c836606a8d4060c9b9b",
+      "bytes": 1824683
+    },
+    "docs/geomath-app/assets/mockups/04-account-and-duel-result.png": {
+      "git_blob": "73803845a953df8e088f0b77b996ae1ed729d7ba",
+      "bytes": 1633207
+    },
+    "docs/geomath-app/assets/mockups/05-teacher-workspace.png": {
+      "git_blob": "d2c07bd1e7bf3aeca9f385667475292b7fb2bcb7",
+      "bytes": 1815250
+    },
+    "docs/geomath-app/assets/mockups/06-student-and-profile.png": {
+      "git_blob": "5043b93d195d4812966822927c77a684d3d6d5b6",
+      "bytes": 1846803
+    },
+    "docs/geomath-app/assets/mockups/07-explore-notes-calculator.png": {
+      "git_blob": "32190d4890bd7177f51d794b22954f6c7727dc63",
+      "bytes": 1797105
+    },
+    "docs/geomath-app/assets/mockups/08-interactive-labs.png": {
+      "git_blob": "d53f31f246bcae6f20510661ba935bebb02f9944",
+      "bytes": 1885707
+    },
+    "docs/geomath-app/assets/mockups/09-studio-and-progress.png": {
+      "git_blob": "51cc7acd42e1ddfdf9e8f4576cd15073a6c53c77",
+      "bytes": 1740491
+    },
+    "docs/geomath-app/assets/mockups/10-settings-and-support.png": {
+      "git_blob": "64476cf0fa9e846428cd7bf43cfaf3d885dcc78f",
+      "bytes": 1827737
+    },
+    "docs/geomath-app/assets/mockups/11-hub-and-class-management.png": {
+      "git_blob": "ad0c9678fde356abf41b885d6e0cd408ab28f610",
+      "bytes": 1751677
+    },
+    "docs/geomath-app/assets/mockups/12-auth-sessions-connection.png": {
+      "git_blob": "864c4dece748e35facde3c60cf1291caed14875a",
+      "bytes": 1799390
+    }
+  },
+  "baseline": {
+    "files": 687,
+    "bytes": 34622003
+  },
+  "verification": {
+    "status": "pending",
+    "limits": "Host checks and compilation do not establish USB/phone or hosted acceptance."
+  }
+}

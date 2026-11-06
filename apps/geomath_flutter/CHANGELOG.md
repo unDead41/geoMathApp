@@ -1,5 +1,19 @@
 # GeoMath app changes
 
+## 0.3.1+5 — 6 November 2026
+
+- Consolidate all App branch histories and the latest typed AI scroll key, navigation regressions and SQLite upgrade/reopen tests on geoMathApp/main.
+- Move completed repository-split provenance into the documentation archive and remove obsolete split scripts/workflows.
+- Update current continuation commands and source ownership; preserve the eleven-model offline bundle, dependency lock, Android identity and signing configuration.
+- Keep historical device captures associated with their original snapshots; record current host/build checks in the cleanup report.
+
+## 0.3.0+4 — 6 November 2026
+
+- Consolidate the completed native app, canonical learning modules, accounts/classes/profile, Solo/Duel/sync, UI/UX refinement and offline adaptive AI on the app branch.
+- Add Main → Lawan AI with Easy/Medium/Hard caps, next-question adaptation, independent plans and actor-bound pause/save/resume.
+- Preserve the refined navigation, text scaling, eleven-solid controls, mathematical notation/variable legends, solid/net swipe and guarded selection.
+- Keep the original GeoMath Android identity. Existing signing-key compatibility and hosted acceptance limits remain explicit in the app handoff.
+
 ## 0.2.0+2 — 6 November 2026
 
 - Refine the shared native design, adaptive navigation, system text scaling, reduced motion and optional haptics.

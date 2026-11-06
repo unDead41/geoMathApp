@@ -217,7 +217,7 @@ final class _AiBattleScreenState extends State<AiBattleScreen> {
     final profile = AiDifficultyProfile.of(_difficulty);
     return GeoMathScaffold(
       key: const ValueKey('ai-setup-shell'),
-      scrollKey: const PageStorageKey('ai-setup-scroll'),
+      scrollKey: const PageStorageKey<String>('ai-setup-scroll'),
       title: t('title'),
       subtitle: t('intro'),
       onBack: AppScope.of(context).router.back,

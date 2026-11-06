@@ -3,9 +3,9 @@
 ## Checkout and toolchain
 
 ```sh
-git clone https://github.com/unDead41/geodecoder.git
-cd geodecoder
-git switch app
+git clone https://github.com/unDead41/geoMathApp.git
+cd geoMathApp
+git switch main
 cd apps/geomath_flutter
 flutter --version
 flutter doctor -v
@@ -28,8 +28,8 @@ restore and the one sync owner start before Home.
 For a new checkout, these commands use the production branch and entry point:
 
 ```powershell
-git clone --branch app --single-branch https://github.com/unDead41/geodecoder.git
-Set-Location geodecoder/apps/geomath_flutter
+git clone --branch main --single-branch https://github.com/unDead41/geoMathApp.git
+Set-Location geoMathApp/apps/geomath_flutter
 flutter pub get
 flutter devices
 flutter run
@@ -38,7 +38,7 @@ flutter build apk --debug
 
 With one Android emulator/USB device connected, Flutter selects it. With several
 devices, choose the Android device from Flutter's displayed list. For an existing
-clean checkout, run `git switch app` and `git pull --ff-only origin app` from the
+clean checkout, run `git switch main` and `git pull --ff-only origin main` from the
 repository root, then enter `apps/geomath_flutter`. No manual Dart edits are needed.
 
 ## Optional public cloud configuration
@@ -102,7 +102,11 @@ The CI scripts capture selected Android runtime warnings and UI evidence only.
 Screenshots may contain user-entered information; use guest/test data.
 
 
-## Integrated Android gate
+## Historical integrated Android gate
+
+The following device-runner description belongs to earlier feature handoffs. Current `geoMathApp` CI uses `../../.github/workflows/validate.yml` for format/analyzer, host/contract/tooling tests, reproducible offline assets and Android compilation; it does not perform a new emulator or phone acceptance run. Read the exact historical receipts before reusing their device claims.
+
+### Earlier device workflow
 
 The workflow builds a combined test APK and preserves a separate normal
 `lib/main.dart` APK. It runs all real-plugin/canonical WebView cases with

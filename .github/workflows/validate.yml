@@ -1,7 +1,7 @@
 name: GeoMath App checks
 on:
   push:
-    branches: [main, 'app-*', app, 'feature/**', 'fix/**']
+    branches: [main, 'feature/**', 'fix/**', 'chore/**']
   pull_request:
 permissions:
   contents: read
@@ -11,10 +11,13 @@ concurrency:
 jobs:
   verify:
     runs-on: ubuntu-24.04
-    timeout-minutes: 35
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v7
       - run: python3 tools/check_repository_scope.py
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '22'
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
@@ -24,11 +27,36 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - name: Flutter and bundled contract checks
+      - uses: actions/cache@v5
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: app-gradle-${{ runner.os }}-${{ hashFiles('apps/geomath_flutter/android/**/*.gradle*', 'apps/geomath_flutter/android/gradle/wrapper/gradle-wrapper.properties', 'apps/geomath_flutter/pubspec.lock') }}
+      - name: Flutter format, analyzer and real host tests
         working-directory: apps/geomath_flutter
         run: |
+          flutter --version
           flutter pub get
           dart format --output=none --set-exit-if-changed lib test integration_test test_driver
           flutter analyze
-          flutter test
+          flutter test --reporter expanded
+      - name: Canonical contracts, offline rebuilds and Android tooling
+        working-directory: apps/geomath_flutter
+        run: |
           node --test tools/contracts/verify_exports.test.mjs test/foundation/native_adapter_contract.test.mjs test/features/learning/bundle/*.test.mjs test/features/learning/surface/*.test.mjs test/features/learning/studio/checkpoint_schema_parity.test.mjs
+          node tools/module/rebuild_bundled_module.mjs
+          git diff --exit-code -- assets docs/source_lock.json
+          node tools/module/rebuild_bundled_module.mjs
+          git diff --exit-code -- assets docs/source_lock.json
+          python3 -m unittest discover -s tools/android -p 'test_*.py'
+          python3 -m unittest discover -s tools/android/tests -p 'test_*.py'
+      - name: Verify planning asset inventory
+        run: python3 docs/geomath-app/tools/validate_docs.py
+      - name: Compile the integrated Android application
+        working-directory: apps/geomath_flutter
+        run: flutter build apk --debug
+      - name: Confirm source remains clean
+        run: |
+          git diff --exit-code
+          python3 tools/check_repository_scope.py

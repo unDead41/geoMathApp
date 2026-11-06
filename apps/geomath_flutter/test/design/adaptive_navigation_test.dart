@@ -11,6 +11,8 @@ import 'package:geomath_flutter/core/preferences/preferences.dart';
 import 'package:geomath_flutter/core/result.dart';
 import 'package:geomath_flutter/core/session/guest_identity_store.dart';
 import 'package:geomath_flutter/core/widgets/widgets.dart';
+import 'package:geomath_flutter/features/ai_battle/ai_battle_feature.dart';
+import 'package:geomath_flutter/features/ai_battle/presentation/ai_battle_screen.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 void main() {
@@ -20,6 +22,7 @@ void main() {
     WidgetTester tester, {
     AppPreferences preferences = const AppPreferences(),
     GlobalKey<_ActivityState>? activityKey,
+    List<FeatureContribution> extraFeatures = const [],
   }) async {
     final result = await tester.runAsync(
       () => AppDependencies.bootstrap(
@@ -46,6 +49,7 @@ void main() {
               ),
             ],
           ),
+          ...extraFeatures,
         ],
       ),
     );
@@ -267,6 +271,125 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets(
+    'AI confirmation consumes one back before returning to the preserved activity',
+    (tester) async {
+      _viewport(tester, 390);
+      final activityKey = GlobalKey<_ActivityState>();
+      final app = await bootstrap(
+        tester,
+        activityKey: activityKey,
+        preferences: const AppPreferences(textScale: 1.5, reducedMotion: true),
+        extraFeatures: [aiBattleFeature()],
+      );
+      final ai = (await tester.runAsync(
+        () async => app.composition.services.get(AiBattleServices.controller),
+      ))!;
+      await tester.runAsync(() async {
+        await ai.initialize();
+        expect(
+          await ai.start(
+            name: 'Previously saved match',
+            difficulty: AiDifficulty.easy,
+          ),
+          isTrue,
+        );
+        expect(await ai.leave(), isTrue);
+      });
+      final savedId = ai.savedSlot!.id;
+      await tester.pumpWidget(
+        Builder(
+          builder: (context) => MediaQuery(
+            data: MediaQuery.of(context)
+                .copyWith(textScaler: const _NonlinearScaler()),
+            child: GeoMathApp(dependencies: app, initialRoute: 'test-learn'),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      final activity = activityKey.currentState!;
+      final router = AppScope.of(activity.context).router;
+      final activityInstance = router.navigation.current.instance;
+      await tester.enterText(
+        find.byType(TextField),
+        'Preserved learning draft',
+      );
+      FocusManager.instance.primaryFocus?.unfocus();
+      router.open('ai-battle');
+      await tester.pump();
+      await _settleAiRead(tester, ai);
+      await tester.pumpAndSettle();
+      final aiInstance = router.navigation.current.instance;
+      expect(find.byType(GeoDestinationBar), findsNothing);
+      expect(find.byType(NavigationRail), findsNothing);
+      expect(router.destination, AppDestination.play);
+      final aiContext = tester.element(find.byType(AiBattleScreen));
+      final scaler = MediaQuery.textScalerOf(aiContext);
+      expect(scaler.scale(16), 48);
+      expect(scaler.scale(32), 72);
+      final name = find.descendant(
+        of: find.byKey(const ValueKey('ai-name')),
+        matching: find.byType(TextFormField),
+      );
+      await tester.enterText(name, 'Retained AI draft');
+      FocusManager.instance.primaryFocus?.unfocus();
+      await tester.pump();
+      final start = find.byKey(const ValueKey('ai-start'));
+      await tester.ensureVisible(start);
+      await tester.pumpAndSettle();
+      await tester.tap(start);
+      await tester.pumpAndSettle();
+      expect(find.byType(ConfirmationSheet), findsOneWidget);
+
+      expect(
+        await tester.runAsync(() {
+          final firstBack = router.popRoute();
+          router.back();
+          return firstBack;
+        }),
+        isTrue,
+      );
+      await tester.pumpAndSettle();
+      expect(find.byType(ConfirmationSheet), findsNothing);
+      expect(router.navigation.current.instance, aiInstance);
+      expect(ai.savedSlot!.id, savedId);
+      expect(ai.game, isNull);
+
+      tester.view.physicalSize = const Size(768, 900);
+      await tester.runAsync(
+        () => app.preferences.save(
+          app.preferences.value.copyWith(
+            language: AppLanguage.en,
+            theme: AppTheme.dark,
+          ),
+        ),
+      );
+      await tester.pump();
+      await _settleAiRead(tester, ai);
+      await tester.pumpAndSettle();
+      expect(find.byType(GeoDestinationBar), findsNothing);
+      expect(find.byType(NavigationRail), findsNothing);
+      expect(
+        tester.widget<TextFormField>(name).controller!.text,
+        'Retained AI draft',
+      );
+      expect(
+        app.composition.services.get(AiBattleServices.controller),
+        same(ai),
+      );
+      expect(activityKey.currentState, same(activity));
+      expect(activity.controller.text, 'Preserved learning draft');
+
+      expect(await tester.runAsync(router.popRoute), isTrue);
+      await tester.pumpAndSettle();
+      expect(router.navigation.current.instance, activityInstance);
+      expect(activityKey.currentState, same(activity));
+      expect(activity.controller.text, 'Preserved learning draft');
+      expect(find.byType(NavigationRail), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
+
   testWidgets('system reduced motion disables theme transitions and feedback', (
     tester,
   ) async {
@@ -299,6 +422,23 @@ void _viewport(WidgetTester tester, double width) {
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.resetPhysicalSize);
   addTearDown(tester.view.resetDevicePixelRatio);
+}
+
+Future<void> _settleAiRead(
+  WidgetTester tester,
+  AiBattleController controller,
+) async {
+  // The real route starts its SQLite read in the widget zone. Alternate I/O
+  // and frames so neither the real completion nor fake async waits on itself.
+  final deadline = Stopwatch()..start();
+  do {
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 10)),
+    );
+    await tester.pump(const Duration(milliseconds: 50));
+    if (!controller.loading) return;
+  } while (deadline.elapsed < const Duration(seconds: 10));
+  fail('The AI route did not complete its local SQLite read.');
 }
 
 final class _Activity extends StatefulWidget {
@@ -349,4 +489,14 @@ final class _GuestStore implements GuestIdentityStore {
   Future<Result<String?>> read() async => const Success('adaptive-test-guest');
   @override
   Future<Result<void>> write(String guestId) async => const Success(null);
+}
+
+final class _NonlinearScaler extends TextScaler {
+  const _NonlinearScaler();
+
+  @override
+  double scale(double fontSize) => fontSize * (fontSize <= 20 ? 2 : 1.5);
+
+  @override
+  double get textScaleFactor => 2;
 }

@@ -1,7 +1,7 @@
 name: geomath_flutter
 description: GeoMath learning, classroom and games with adaptive native controls and offline canonical geometry.
 publish_to: none
-version: 0.2.0+2
+version: 0.3.1+5
 environment:
   sdk: ^3.13.7
 dependencies:

@@ -22,7 +22,9 @@ elif platform == 'physical':
     required = ('platformio.ini', 'main/firmware_version.h')
 else:
     raise SystemExit('Unknown GeoMath platform: ' + platform)
-bad = [p for p in files if p and any(p == x or p.startswith(x) for x in banned)]
+obsolete = [p for p in files if p and (p.startswith('artifacts/') or
+            (p.startswith('migration/') and p.endswith(('.py', '.patch', '.yml'))))]
+bad = obsolete + [p for p in files if p and any(p == x or p.startswith(x) for x in banned)]
 missing = [p for p in required if not (root / p).is_file()]
 if bad or missing:
     print('Cross-platform files:', bad)
