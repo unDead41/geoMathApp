@@ -1,2 +1,3 @@
 # geoMathApp
-GeoMath Flutter app: learning modules, classroom, Duel, adaptive AI and offline learning.
+
+GeoMath Flutter app; source separation is being verified.
