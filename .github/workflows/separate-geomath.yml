@@ -1,0 +1,60 @@
+name: Separate GeoMath App
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/separate-geomath.yml'
+      - 'migration/split.py'
+      - 'migration/app-merge.patch'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: geomath-app-separation
+  cancel-in-progress: false
+jobs:
+  separate:
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[run separation]')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Prepare filtered App source
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 -m pip install git-filter-repo==2.47.0
+          python3 migration/split.py prepare app
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.47.9'
+          cache: true
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Verify independent App source
+        working-directory: .migration-work/source/apps/geomath_flutter
+        run: |
+          flutter pub get
+          dart format --output=none --set-exit-if-changed lib test integration_test test_driver
+          flutter analyze
+          flutter test
+          node --test tools/contracts/verify_exports.test.mjs test/foundation/native_adapter_contract.test.mjs test/features/learning/bundle/*.test.mjs test/features/learning/surface/*.test.mjs test/features/learning/studio/checkpoint_schema_parity.test.mjs
+          python3 -m unittest discover -s tools/android -p 'test_*.py'
+          python3 -m unittest discover -s tools/android/tests -p 'test_*.py'
+          flutter build apk --debug
+      - name: Publish verified App branches
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 migration/split.py publish app
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: geomath-app-separation-receipt
+          path: .migration-work/receipt.json
+          if-no-files-found: ignore
